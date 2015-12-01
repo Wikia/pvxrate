@@ -28,11 +28,8 @@ $wgExtensionCredits['specialpage'][] = [
 /* Language Strings, Page Aliases, Hooks  */
 /******************************************/
 $wgMessagesDirs['PvXRate'] = __DIR__.'/i18n';
-//$wgExtensionMessagesFiles['PvXRate']      = __DIR__."/PvXRate.i18n.php";
-//$wgExtensionMessagesFiles['PvXRateMagic'] = __DIR__."/PvXRate.i18n.magic.php";
 
 // Classes
-//$wgAutoloadClasses['rateActions'] = __DIR__.'/classes/rateActions.php';
 $wgAutoloadClasses['RateAction'] = __DIR__.'/classes/RateAction.php';
 $wgAutoloadClasses['PvXRateHooks'] = __DIR__.'/PvXRate.hooks.php';
 
@@ -46,17 +43,7 @@ $wgSpecialPages['UserRatings']           = 'SpecialUserRatings';
 $wgAutoloadClasses['SpecialRecentRatings'] = __DIR__."/specials/SpecialRecentRatings.php";
 $wgSpecialPages['RecentRatings']           = 'SpecialRecentRatings';
 
-// Resource modules
-/*$wgResourceModules['ext.pvxrate'] = [
-	'styles' => ['css/pvxrate.less'],
-	'scripts' => ['js/pvxrate.js'],
-	'localBasePath' => __DIR__.'/',
-	'remoteExtPath' => 'PvXRate',
-	'dependencies' => [],
-];*/
-
 // Hooks
-//$wgHooks['ParserFirstCallInit'][]			= 'PvXRateHooks::onParserFirstCallInit';
 $wgHooks['LoadExtensionSchemaUpdates'][] 	= 'PvXRateHooks::onLoadExtensionSchemaUpdates';
 
 

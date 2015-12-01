@@ -2,43 +2,54 @@
 
 class RateAction extends FormlessAction {
 
-    public function getName() {
-		return 'rate';
-	}
 
+    /**
+     * Action onView. Wraps old rateActions method for conversion from Hook to Action.
+     * @return nothing
+     */
     function onView() {
-        global $wgOut;
-        $action = $action = $this->rateActions('rate',$this->page);
+        global $wgRequest;
+        $this->rateActions($wgRequest->getText('rating'), $this->page);
     }
 
     /**
+     * Return the name of the action
+     * @return string
+     */
+    public function getName() {
+        return 'rate';
+    }
+
+
+    /**
 	 * Handle Rate Action
-	 * @param  [type]  $action  [description]
-	 * @param  Article $article [description]
-	 * @return [type]           [description]
+	 * @param  string $action
+	 * @param  Article $article
+	 * @return bool
 	 */
 	public function rateActions($action, Article $article) {
 		global $wgOut, $wgUser, $wgRequest;
 
 
-
-
 		////////////////////////////////////////////////////////////////////
 		// Checking permissions. if now, lets quit.
 		////////////////////////////////////////////////////////////////////
-		if (!$wgUser->isAllowed('ratebuild')) {
+		if (!$this->getUser()->isAllowed('ratebuild')) {
 			$wgOut->permissionRequired('ratebuild');
 			return false;
 		}
 
-		if ($wgUser->isBlocked()) {
+		if ($this->getUser()->isBlocked()) {
 			$wgOut->blockedPage();
 			return false;
 		}
 
 
-		if (self::ratePermissions()) {
-			if (($wgRequest->getText('action') == 'rate') && ($this->getTitle()->getNamespace() !== NS_SPECIAL) && ($this->getTitle()->getNamespace() == 100)) {
+		if ($this->ratePermissions()) {
+			if (($wgRequest->getText('action') == 'rate')
+            && ($this->getTitle()->getNamespace() !== NS_SPECIAL)
+            && ($this->getTitle()->getNamespace() == 100)
+            && ($article->getID() !== 0)) {
 
                 // page title
 				$wgOut->setPageTitle('Build rating');
@@ -47,30 +58,30 @@ class RateAction extends FormlessAction {
 				$posted_action = $wgRequest->getText('rating');
 				$posted_build  = $wgRequest->getText('build');
 				$posted_update = $wgRequest->getText('ratingid');
-				$rate_input    = self::rateGet($article);
+				$rate_input    = $this->rateGet($article);
 
-				$is_admin = $wgUser->isAllowed('vote_rollback');
+				$is_admin = $this->getUser()->isAllowed('vote_rollback');
 
 				$show_own  = true;
 				$show_all  = true;
 				$show_rate = true;
 
-				if (($posted_action == 'edit') && (self::rateCheckRights($article, $posted_build)) ) {
+				if (($posted_action == 'edit') && ($this->rateCheckRights($article, $posted_build)) ) {
 					$wgOut->addHtml('<h2> Rate this build </h2>');
-					$wgOut->addHtml($this->rateForm(self::rateRead(false, false, $posted_build)));
+					$wgOut->addHtml($this->rateForm($this->rateRead(false, false, $posted_build)));
 					$show_own = false;
 				}
 
 				if (($posted_action == 'rollback') && ($is_admin) && ($posted_build)) {
-					$wgOut->addHtml(self::rateRollback(self::rateRead(false, false, $posted_build)));
+					$wgOut->addHtml($this->rateRollback($this->rateRead(false, false, $posted_build)));
 				}
 
 				if (($posted_action == 'restore') && ($is_admin) && ($posted_build)) {
-					$wgOut->addHtml(self::rateRestore(self::rateRead(false, false, $posted_build)));
+					$wgOut->addHtml($this->rateRestore($this->rateRead(false, false, $posted_build)));
 				}
 
-				if (($posted_action == 'delete') && (self::rateCheckRights($article, $posted_build))) {
-					self::rateDelete($posted_build, $article->getID(), $wgUser->getID());
+				if (($posted_action == 'delete') && ($this->rateCheckRights($article, $posted_build))) {
+					$this->rateDelete($posted_build, $article->getID(), $this->getUser()->getID());
 					$wgOut->addHtml('<h2> Your rating </h2>');
 					$wgOut->addWikiText('Your rating was deleted from our database.');
 					$show_own  = false;
@@ -86,26 +97,26 @@ class RateAction extends FormlessAction {
 						// ERROR! Something went wrong.
 						$wgOut->addHtml($rate_input['error_msg']);
 					} else {
-						if (($posted_action == 'update') && (self::rateCheckRights($article, $posted_update))) {
-							$wgOut->addHtml(self::rateUpdate($rate_input));
+						if (($posted_action == 'update') && ($this->rateCheckRights($article, $posted_update))) {
+							$wgOut->addHtml($this->rateUpdate($rate_input));
 						} elseif ($posted_action == 'rollback') {
-							$wgOut->addHtml(self::rateUpdate($rate_input));
+							$wgOut->addHtml($this->rateUpdate($rate_input));
 						} elseif ($posted_action == 'restore') {
-							$wgOut->addHtml(self::rateUpdate($rate_input));
+							$wgOut->addHtml($this->rateUpdate($rate_input));
 						} else {
 							// posting was good, lets procces it.
 							$rate_input['rollback'] = 0;
 							$rate_input['admin_id'] = 0;
 							$rate_input['reason']   = '';
-							if (!self::rateRead($article->getID(), $wgUser->getID(), false))
-								self::rateSave($rate_input);
+							if (!$this->rateRead($article->getID(), $this->getUser()->getID(), false))
+								$this->rateSave($rate_input);
 						}
 					}
 				}
 
 				# Lets print our standart output. Rate, list currents, yours.
 				$this->ratePrintAll($article, $show_own, $show_rate, $show_all, false);
-				$wgOut->addHtml(self::rateOverLib());
+				$wgOut->addHtml($this->rateOverLib());
 				return false;
 			} else {
 				return true;
@@ -114,13 +125,18 @@ class RateAction extends FormlessAction {
 			# if no permission to rate: show list, but no form
 		} else {
 			$this->ratePrintAll($article, true, false, true, true);
-			$wgOut->addHtml(self::rateOverLib());
+			$wgOut->addHtml($this->rateOverLib());
 			return false;
 		}
 
 	}
 
-    public static function setRate(array &$content_actions, $action) {
+    /**
+     * [setRate description]
+     * @param array  $content_actions [description]
+     * @param [type] $action          [description]
+     */
+    public function setRate(array &$content_actions, $action) {
 
 
 		foreach ($content_actions as $key => $val) {
@@ -139,13 +155,16 @@ class RateAction extends FormlessAction {
 
 	}
 
-	#--- ratePermissions ---#
-	public static function ratePermissions() {
+	/**
+	 * [ratePermissions description]
+	 * @return [type] [description]
+	 */
+	public function ratePermissions() {
 		global $wgUser, $wgOut, $perm_msg;
 
 		# check if user allowed to rate this build
 		# construct a message explaining the results
-		if ($wgUser->isAnon()) {
+		if ($this->getUser()->isAnon()) {
 			$perm_msg = '=== Read-only mode: You are currently not logged in. ===
              __NOEDITSECTION__
 	     For security reasons you need to fulfill the following requirements in order to submit a vote:
@@ -154,7 +173,7 @@ class RateAction extends FormlessAction {
 * You need to make at least 8 edits to the wiki.';
 			$wgOut->addWikiText($perm_msg);
 			return false;
-		} elseif (!$wgUser->mEmailAuthenticated) {
+		} elseif (!$this->getUser()->mEmailAuthenticated) {
 			$perm_msg = '=== Read-only mode: Your e-mail address is not authenticated. ===
              __NOEDITSECTION__
 	     For security reasons you need to fulfill the following requirements in order to submit a vote:
@@ -163,8 +182,8 @@ class RateAction extends FormlessAction {
 * You need to make at least 8 edits to the wiki.';
 			$wgOut->addWikiText($perm_msg);
 			return false;
-		} elseif ($wgUser->edits($wgUser->getID()) < 8) {
-			$perm_msg = '=== Read-only mode: You made only ' . $wgUser->edits($wgUser->getID()) . ' edits so far. ===
+		} elseif ($this->getUser()->getEditCount() < 8) {
+			$perm_msg = '=== Read-only mode: You made only ' . $this->getUser()->edits($this->getUser()->getID()) . ' edits so far. ===
              __NOEDITSECTION__
 	     For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
@@ -176,13 +195,25 @@ class RateAction extends FormlessAction {
 		return true;
 	}
 
-	#--- rateLink ---#
-	public static function rateLink(&$article, $name, $action, $id) {
+	/**
+	 * [rateLink description]
+	 * @param  [type] $article [description]
+	 * @param  [type] $name    [description]
+	 * @param  [type] $action  [description]
+	 * @param  [type] $id      [description]
+	 * @return [type]          [description]
+	 */
+	public function rateLink(&$article, $name, $action, $id) {
 		global $wgUser;
-		return '<div class="aedit">[&nbsp;' . $wgUser->getSkin()->makeKnownLinkObj($article->getTitle(), $name, 'action=rate&rating=' . $action . '&build=' . $id) . '&nbsp;]&nbsp;</div>';
+		return '<div class="aedit">[&nbsp;' . Linker::link($article->getTitle(), $name, [], ['action'=>'rate','rating'=>$action,'build'=>$id]) . '&nbsp;]&nbsp;</div>';
 	}
 
-	#--- ratePrint ---#
+	/**
+	 * [ratePrint description]
+	 * @param  array  $rate_results [description]
+	 * @param  [type] $link         [description]
+	 * @return [type]               [description]
+	 */
 	public function ratePrint(array $rate_results, $link) {
 		global $wgUser, $wgParser, $wgOut, $wgExtensionsPath;
 		$dbr =& wfGetDB(DB_SLAVE);
@@ -252,7 +283,7 @@ class RateAction extends FormlessAction {
 		}
 		$out = '
 		<div class="rating"><table border="1" cellpadding="0" cellspacing="3">
-		<tr><td class="tdrating"><div style="width:' . $final_tbl . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r1.jpg);"><span>Overall</span></div></td>
+		<tr><td class="tdrating"><div style="width:' . $final_tbl . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r1.jpg);"><span>Overall</span></div></td>
 		    <td class="tdresult">' . sprintf('%3.1f', round($cur_score * 10) / 10) . '</td>
 		    <td class="tdcomment" rowspan="4">
 			<table border="0" style="border:0px;">
@@ -264,13 +295,13 @@ class RateAction extends FormlessAction {
 		        </table>
                             </td>
 		 </tr><tr>
-                            <td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r2.jpg);"><span>Effectiveness</span></div></td>
+                            <td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r2.jpg);"><span>Effectiveness</span></div></td>
 		     <td class="tdresult">' . $rate[1] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r3.jpg);"><span>Universality</span></div></td>
+		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r3.jpg);"><span>Universality</span></div></td>
 		     <td class="tdresult">' . $rate[2] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r4.jpg);"><span>Innovation</span></div></td>
+		     <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r4.jpg);"><span>Innovation</span></div></td>
 		     <td class="tdresult">' . $inno_out . '</td>
 		 </tr>
 		 </table>
@@ -279,51 +310,56 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-	/////////////////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * [ratePrintAll description]
+     * @param  [type] $article   [description]
+     * @param  [type] $show_own  [description]
+     * @param  [type] $show_form [description]
+     * @param  [type] $show_all  [description]
+     * @param  [type] $read_only [description]
+     * @return [type]            [description]
+     */
 	public function ratePrintAll($article, $show_own, $show_form, $show_all, $read_only) {
 		global $wgOut, $wgUser;
 
-		$current = self::rateRead($article->getID(), false, false);
+		$current = $this->rateRead($article->getID(), false, false);
 
 		if ($current) {
 			// Getting the info from database.
 			foreach ($current as $array) {
 				if ($read_only) {
-					$out_all .= self::ratePrint($array, '');
+					$out_all .= $this->ratePrint($array, '');
 				} else {
 					if ($array['rollback']) {
-						if ($array['user_id'] == $wgUser->getID()) {
-							$link = self::rateLink($article, 'delete', 'delete', $array['rate_id']);
-							$link .= self::rateLink($article, 'edit', 'edit', $array['rate_id']);
-							$out_rmv   = self::ratePrint($array, $link);
+						if ($array['user_id'] == $this->getUser()->getID()) {
+							$link = $this->rateLink($article, 'delete', 'delete', $array['rate_id']);
+							$link .= $this->rateLink($article, 'edit', 'edit', $array['rate_id']);
+							$out_rmv   = $this->ratePrint($array, $link);
 							$show_form = false;
-						} elseif ($wgUser->isAllowed('vote_rollback')) {
-							$link = self::rateLink($article, 'restore', 'restore', $array['rate_id']);
-							$out_rmv .= self::ratePrint($array, $link);
+						} elseif ($this->getUser()->isAllowed('vote_rollback')) {
+							$link = $this->rateLink($article, 'restore', 'restore', $array['rate_id']);
+							$out_rmv .= $this->ratePrint($array, $link);
 						} else {
-							$out_rmv .= self::ratePrint($array, '');
+							$out_rmv .= $this->ratePrint($array, '');
 						}
 					} else {
-						if ($array['user_id'] == $wgUser->getID()) {
-							$link = self::rateLink($article, 'delete', 'delete', $array['rate_id']);
-							$link .= self::rateLink($article, 'edit', 'edit', $array['rate_id']);
-							$out_own   = self::ratePrint($array, $link);
+						if ($array['user_id'] == $this->getUser()->getID()) {
+							$link = $this->rateLink($article, 'delete', 'delete', $array['rate_id']);
+							$link .= $this->rateLink($article, 'edit', 'edit', $array['rate_id']);
+							$out_own   = $this->ratePrint($array, $link);
 							$show_form = false;
-						} elseif ($wgUser->isAllowed('vote_rollback')) {
-							$link = self::rateLink($article, 'remove', 'rollback', $array['rate_id']);
-							$out_all .= self::ratePrint($array, $link);
+						} elseif ($this->getUser()->isAllowed('vote_rollback')) {
+							$link = $this->rateLink($article, 'remove', 'rollback', $array['rate_id']);
+							$out_all .= $this->ratePrint($array, $link);
 						} else {
-							$out_all .= self::ratePrint($array, '');
+							$out_all .= $this->ratePrint($array, '');
 						}
 					}
 				}
 			}
 
 			# $out .=  ('<h2> Rating Totals </h2>'); # included in ratePrintResults now
-			$out .= self::ratePrintResults($article->getID());
+			$out .= $this->ratePrintResults($article->getID());
 
 			if (($out_own) && ($show_own)) {
 				$out .= ('<h2> Your Rating </h2>');
@@ -352,8 +388,12 @@ class RateAction extends FormlessAction {
 		$wgOut->addHtml($out);
 	}
 
-	#--- ratePrintResults ---#
-	public static function ratePrintResults($page_id) {
+	/**
+	 * [ratePrintResults description]
+	 * @param  [type] $page_id [description]
+	 * @return [type]          [description]
+	 */
+	public function ratePrintResults($page_id) {
 
 		# names of criteria
 		$rate_names = array(
@@ -436,16 +476,16 @@ class RateAction extends FormlessAction {
 		$out .= '<table border="0" cellpadding="0" cellspacing="0"><tr>';
 		$out .= '<td><div class="sum"><table border="0" cellpadding="0" cellspacing="3">
             <tr><td class="tdrating"><div style="width:' . round($final[0] * 168 / 5) . 'px;
-                    background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r1.jpg);"><span>Overall</span></div></td>
+                    background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r1.jpg);"><span>Overall</span></div></td>
      <td class="tdresult">' . sprintf('%4.2f', round($final[0] * 100) / 100) . '</td></tr>
      <tr><td class="tdrating"><div style="width:' . round($final[1] * 168 / 5) . 'px;
-                    background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r2.jpg);"><span>Effectiveness</span></div></td>
+                    background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r2.jpg);"><span>Effectiveness</span></div></td>
      <td class="tdresult">' . sprintf('%4.2f', round($final[1] * 100) / 100) . '</td></tr>
             <tr><td class="tdrating"><div style="width:' . round($final[2] * 168 / 5) . 'px;
-                    background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r3.jpg);"><span>Universality</span></div></td>
+                    background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r3.jpg);"><span>Universality</span></div></td>
             <td class="tdresult">' . sprintf('%4.2f', round($final[2] * 100) / 100) . '</td></tr>
             <tr><td class="tdrating"><div style="width:' . round($final[3] * 168 / 5) . 'px;
-                    background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/r4.jpg);"><span>Innovation</span></div></td>
+                    background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/r4.jpg);"><span>Innovation</span></div></td>
      <td class="tdresult">' . sprintf('%4.0f', round($final[3] * 20)) . '%</td></tr>
      </table></div></td>';
 
@@ -465,12 +505,12 @@ class RateAction extends FormlessAction {
 			# plot
 			$out .= '<td><div class="result"><table border="1" cellpadding="0" cellspacing="3"><tr>
                     <td colspan="6" class="tdresult"><span onmouseover="return overlib(div(\'load' . $rate_names[$c] . '\').innerHTML, WRAP, CENTER, WIDTH, 300, OFFSETY, -25, OFFSETX, -247, VAUTO);" onmouseout="return nd();">' . $rate_names[$c] . '</span></td></tr>
-                    <tr><td class="tdrating"><div style="height:' . ($histo[$c][0]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/v' . ($c + 1) . '.jpg);"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][1]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/v' . ($c + 1) . '.jpg);"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][2]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/v' . ($c + 1) . '.jpg);"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][3]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/v' . ($c + 1) . '.jpg);"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][4]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/v' . ($c + 1) . '.jpg);"></div></td>
-                	 <td class="tdrating"><div style="height:' . ($histo[$c][5]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvX/Rate/v' . ($c + 1) . '.jpg);"></div></td>
+                    <tr><td class="tdrating"><div style="height:' . ($histo[$c][0]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/v' . ($c + 1) . '.jpg);"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][1]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/v' . ($c + 1) . '.jpg);"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][2]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/v' . ($c + 1) . '.jpg);"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][3]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/v' . ($c + 1) . '.jpg);"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][4]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/v' . ($c + 1) . '.jpg);"></div></td>
+                	 <td class="tdrating"><div style="height:' . ($histo[$c][5]) . 'px; width:13px; background-image:url(' . $wgExtensionsPath . 'extensions/PvXRate/images/v' . ($c + 1) . '.jpg);"></div></td>
 	     </tr><tr>
 		 <td class="tdresult">0</td>
 		 <td class="tdresult">1</td>
@@ -486,22 +526,33 @@ class RateAction extends FormlessAction {
 
 	}
 
-	public static function rateCheckRights($article, $build_id) {
+    /**
+     * [rateCheckRights description]
+     * @param  [type] $article  [description]
+     * @param  [type] $build_id [description]
+     * @return [type]           [description]
+     */
+	public function rateCheckRights($article, $build_id) {
 		global $wgUser;
 
-		$rating_posted = self::rateRead(false, false, $build_id);
+		$rating_posted = $this->rateRead(false, false, $build_id);
 		if (($rating_posted[0]['page_id']) && ($rating_posted[0]['user_id'])) {
-			$rating_control = self::rateRead($rating_posted[0]['page_id'], $rating_posted[0]['user_id'], false);
+			$rating_control = $this->rateRead($rating_posted[0]['page_id'], $rating_posted[0]['user_id'], false);
 		}
 
-		if (($rating_control[0]['page_id'] == $article->getID()) && ($rating_control[0]['user_id'] == $wgUser->getID())) {
+
+		if (($rating_control[0]['page_id'] == $article->getID()) && ($rating_control[0]['user_id'] == $this->getUser()->getID())) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	// Creating form
+	/**
+	 * [rateForm description]
+	 * @param  array  $rate_value [description]
+	 * @return [type]             [description]
+	 */
 	public function rateForm(array $rate_value) {
 		global $wgUser;
 		$rate_names = array(
@@ -565,7 +616,12 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-	public static function rateRollback(array $rate_value) {
+    /**
+     * [rateRollback description]
+     * @param  array  $rate_value [description]
+     * @return [type]             [description]
+     */
+	public function rateRollback(array $rate_value) {
 
 		$submit = 'Remove';
 		$update = $rate_value[0]['rate_id'];
@@ -578,7 +634,12 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-	public static function rateRestore(array $rate_value) {
+    /**
+     * [rateRestore description]
+     * @param  array  $rate_value [description]
+     * @return [type]             [description]
+     */
+	public function rateRestore(array $rate_value) {
 
 		$submit = 'Restore';
 		$update = $rate_value[0]['rate_id'];
@@ -591,12 +652,16 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-	// Lets get POST vars
-	public static function rateGet(Article &$article) {
+	/**
+	 * [rateGet description]
+	 * @param  Article $article [description]
+	 * @return [type]           [description]
+	 */
+	public function rateGet(Article &$article) {
 		global $wgUser, $wgRequest;
 		$rate_input = array(
 			'page_id' => $article->getID(),
-			'user_id' => $wgUser->getID(),
+			'user_id' => $this->getUser()->getID(),
 			'comment' => $wgRequest->getText('comment'),
 			'rollback' => $wgRequest->getText('rollback'),
 			'restore' => $wgRequest->getText('restore'),
@@ -612,8 +677,8 @@ class RateAction extends FormlessAction {
 		);
 
 		if ((($rate_input['rollback'] == 1) || ($rate_input['restore'] == 1)) && (strlen($rate_input['reason']) > 0)) {
-			if ($wgUser->isAllowed('vote_rollback')) {
-				$rate_input['admin_id'] = $wgUser->getID();
+			if ($this->getUser()->isAllowed('vote_rollback')) {
+				$rate_input['admin_id'] = $this->getUser()->getID();
 			} else {
 				$rate_input['error']     = true;
 				$rate_input['error_msg'] = 'You are not admin.';
@@ -637,8 +702,12 @@ class RateAction extends FormlessAction {
 		}
 	}
 
-	# Let's update
-	public static function rateUpdate(array $input) {
+	/**
+	 * [rateUpdate description]
+	 * @param  array  $input [description]
+	 * @return [type]        [description]
+	 */
+	public function rateUpdate(array $input) {
 		$dbw =& wfGetDB(DB_MASTER);
 		$dbw->begin();
 		if ($input['rollback'] || $input['restore']) {
@@ -666,8 +735,14 @@ class RateAction extends FormlessAction {
 		return;
 	}
 
-	// Lets delete from DB
-	public static function rateDelete($rate_id, $page_id, $user_id) {
+    /**
+     * [rateDelete description]
+     * @param  [type] $rate_id [description]
+     * @param  [type] $page_id [description]
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+	public function rateDelete($rate_id, $page_id, $user_id) {
 		//echo $rate_id . $page_id . $user_id;
 		$dbw =& wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -680,8 +755,12 @@ class RateAction extends FormlessAction {
 		return true;
 	}
 
-	// Lets store in DB
-	public static function rateSave(array $input) {
+	/**
+	 * [rateSave description]
+	 * @param  array  $input [description]
+	 * @return [type]        [description]
+	 */
+	public function rateSave(array $input) {
 		$dbw =& wfGetDB(DB_MASTER);
 		$dbw->begin();
 		$dbw->insert('rating', array(
@@ -698,8 +777,14 @@ class RateAction extends FormlessAction {
 		return true;
 	}
 
-	#--- rateRead ---#
-	public static function rateRead($page_id, $user_id, $rate_id) {
+	/**
+	 * Read ratings from db
+	 * @param  int $page_id
+	 * @param  int $user_id
+	 * @param  int $rate_id
+	 * @return array|false
+	 */
+	public function rateRead($page_id, $user_id, $rate_id) {
 
 		$dbr =& wfGetDB(DB_SLAVE);
 
@@ -741,7 +826,11 @@ class RateAction extends FormlessAction {
 		return $rate_out;
 	}
 
-	public static function rateOverLib() {
+    /**
+     * Returns some discriptive html.
+     * @return string
+     */
+	public function rateOverLib() {
 		$out .= '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>';
 		$out .= '
 		<div id="loadEffectiveness" style="display: none;">

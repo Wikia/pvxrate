@@ -14,16 +14,6 @@
 
 class PvXRateHooks {
 	/**
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit
-	 * @param Parser $parser
-	 * @return true
-	 */
-	public static function onParserFirstCallInit( Parser &$parser ) {
-		// Add parser hooks here!
-		return true;
-	}
-
-	/**
 	 * @param  DatabaseUpdater $updater
 	 * @return true;
 	 */
