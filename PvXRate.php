@@ -12,39 +12,16 @@
  *
 **/
 
-/******************************************/
-/* Credits                                */
-/******************************************/
-$wgExtensionCredits['specialpage'][] = [
-	'path'           => __FILE__,
-	'name'           => 'PvX Rate',
-	'author'         => ['gcardinal', 'Hhhippo', 'Alexia E. Smith', 'Cameron Chunn'],
-	'descriptionmsg' => 'pvxrate_description',
-];
 
-//$wgAvailableRights[] = 'pvxrate';
-
-/******************************************/
-/* Language Strings, Page Aliases, Hooks  */
-/******************************************/
-$wgMessagesDirs['PvXRate'] = __DIR__.'/i18n';
-
-// Classes
-$wgAutoloadClasses['RateAction'] = __DIR__.'/classes/RateAction.php';
-$wgAutoloadClasses['PvXRateHooks'] = __DIR__.'/PvXRate.hooks.php';
-
-// Actions
-$wgActions['rate'] = 'RateAction';
-
-// Special Pages
-$wgAutoloadClasses['SpecialUserRatings'] = __DIR__."/specials/SpecialUserRatings.php";
-$wgSpecialPages['UserRatings']           = 'SpecialUserRatings';
-
-$wgAutoloadClasses['SpecialRecentRatings'] = __DIR__."/specials/SpecialRecentRatings.php";
-$wgSpecialPages['RecentRatings']           = 'SpecialRecentRatings';
-
-// Hooks
-$wgHooks['LoadExtensionSchemaUpdates'][] 	= 'PvXRateHooks::onLoadExtensionSchemaUpdates';
-
-
-$wgGroupPermissions['user']['ratebuild'] = true;
+if ( function_exists( 'wfLoadExtension' ) ) {
+	wfLoadExtension( 'PvXRate' );
+	// Keep i18n globals so mergeMessageFileList.php doesn't break
+	$wgMessagesDirs['PvXRate'] = __DIR__ . '/i18n';
+	wfWarn(
+		'Deprecated PHP entry point used for PvX Rate extension. Please use wfLoadExtension instead, ' .
+		'see https://www.mediawiki.org/wiki/Extension_registration for more details.'
+	);
+	return;
+} else {
+	die( 'This version of the FooBar extension requires MediaWiki 1.25+' );
+}

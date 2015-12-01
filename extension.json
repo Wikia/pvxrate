@@ -1,0 +1,40 @@
+{
+	"name": "PvX Rate",
+	"author": [
+		"gcardinal",
+		"Hhhippo",
+		"Alexia E. Smith",
+		"Cameron Chunn"
+	],
+	"descriptionmsg": "pvxrate_description",
+	"type": "specialpage",
+	"GroupPermissions": {
+		"user": {
+			"ratebuild": true
+		}
+	},
+	"SpecialPages": {
+		"UserRatings": "SpecialUserRatings",
+		"RecentRatings": "SpecialRecentRatings"
+	},
+	"Actions": {
+		"rate": "RateAction"
+	},
+	"MessagesDirs": {
+		"PvXRate": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"RateAction": "classes/RateAction.php",
+		"PvXRateHooks": "PvXRate.hooks.php",
+		"SpecialUserRatings": "specials/SpecialUserRatings.php",
+		"SpecialRecentRatings": "specials/SpecialRecentRatings.php"
+	},
+	"Hooks": {
+		"LoadExtensionSchemaUpdates": [
+			"PvXRateHooks::onLoadExtensionSchemaUpdates"
+		]
+	},
+	"manifest_version": 1
+}
