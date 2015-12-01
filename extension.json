@@ -31,6 +31,10 @@
 		"SpecialUserRatings": "specials/SpecialUserRatings.php",
 		"SpecialRecentRatings": "specials/SpecialRecentRatings.php"
 	},
+	"config": {
+		"PvXRateBuildNamespace": "NS_BUILDZ",
+		"PvXRateBuildTalkNamespace": "NS_BUILD_TALK"
+	},
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": [
 			"PvXRateHooks::onLoadExtensionSchemaUpdates"

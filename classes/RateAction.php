@@ -4,15 +4,6 @@ class RateAction extends FormlessAction {
 
 
     /**
-     * Action onView. Wraps old rateActions method for conversion from Hook to Action.
-     * @return nothing
-     */
-    function onView() {
-        global $wgRequest;
-        $this->rateActions($wgRequest->getText('rating'), $this->page);
-    }
-
-    /**
      * Return the name of the action
      * @return string
      */
@@ -22,15 +13,22 @@ class RateAction extends FormlessAction {
 
 
     /**
-	 * Handle Rate Action
+	 * Handle viewing of action.
 	 * @param  string $action
 	 * @param  Article $article
 	 * @return bool
 	 */
-	public function rateActions($action, Article $article) {
-		global $wgOut, $wgUser, $wgRequest;
+	function onView() {
+		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace;
+
+        $action = $wgRequest->getText('rating');
+        $article = $this->page;
 
 
+        $buildNamespace = @constant($wgPvXRateBuildNamespace);
+        if (!$buildNamespace) {
+            wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
+        }
 		////////////////////////////////////////////////////////////////////
 		// Checking permissions. if now, lets quit.
 		////////////////////////////////////////////////////////////////////
@@ -48,7 +46,7 @@ class RateAction extends FormlessAction {
 		if ($this->ratePermissions()) {
 			if (($wgRequest->getText('action') == 'rate')
             && ($this->getTitle()->getNamespace() !== NS_SPECIAL)
-            && ($this->getTitle()->getNamespace() == 100)
+            && ($this->getTitle()->getNamespace() == $buildNamespace)
             && ($article->getID() !== 0)) {
 
                 // page title
@@ -133,8 +131,8 @@ class RateAction extends FormlessAction {
 
     /**
      * [setRate description]
-     * @param array  $content_actions [description]
-     * @param [type] $action          [description]
+     * @param array  $content_actions
+     * @param [type] $action
      */
     public function setRate(array &$content_actions, $action) {
 
@@ -157,7 +155,7 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * [ratePermissions description]
-	 * @return [type] [description]
+	 * @return [type]
 	 */
 	public function ratePermissions() {
 		global $wgUser, $wgOut, $perm_msg;
@@ -197,11 +195,11 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * [rateLink description]
-	 * @param  [type] $article [description]
-	 * @param  [type] $name    [description]
-	 * @param  [type] $action  [description]
-	 * @param  [type] $id      [description]
-	 * @return [type]          [description]
+	 * @param  [type] $article
+	 * @param  [type] $name
+	 * @param  [type] $action
+	 * @param  [type] $id
+	 * @return [type]
 	 */
 	public function rateLink(&$article, $name, $action, $id) {
 		global $wgUser;
@@ -210,9 +208,9 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * [ratePrint description]
-	 * @param  array  $rate_results [description]
-	 * @param  [type] $link         [description]
-	 * @return [type]               [description]
+	 * @param  array  $rate_results
+	 * @param  [type] $link
+	 * @return [type]
 	 */
 	public function ratePrint(array $rate_results, $link) {
 		global $wgUser, $wgParser, $wgOut, $wgExtensionsPath;
@@ -312,12 +310,12 @@ class RateAction extends FormlessAction {
 
     /**
      * [ratePrintAll description]
-     * @param  [type] $article   [description]
-     * @param  [type] $show_own  [description]
-     * @param  [type] $show_form [description]
-     * @param  [type] $show_all  [description]
-     * @param  [type] $read_only [description]
-     * @return [type]            [description]
+     * @param  [type] $article
+     * @param  [type] $show_own
+     * @param  [type] $show_form
+     * @param  [type] $show_all
+     * @param  [type] $read_only
+     * @return [type]
      */
 	public function ratePrintAll($article, $show_own, $show_form, $show_all, $read_only) {
 		global $wgOut, $wgUser;
@@ -390,8 +388,8 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * [ratePrintResults description]
-	 * @param  [type] $page_id [description]
-	 * @return [type]          [description]
+	 * @param  [type] $page_id
+	 * @return [type]
 	 */
 	public function ratePrintResults($page_id) {
 
@@ -528,9 +526,9 @@ class RateAction extends FormlessAction {
 
     /**
      * [rateCheckRights description]
-     * @param  [type] $article  [description]
-     * @param  [type] $build_id [description]
-     * @return [type]           [description]
+     * @param  [type] $article
+     * @param  [type] $build_id
+     * @return [type]
      */
 	public function rateCheckRights($article, $build_id) {
 		global $wgUser;
@@ -550,8 +548,8 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * [rateForm description]
-	 * @param  array  $rate_value [description]
-	 * @return [type]             [description]
+	 * @param  array  $rate_value
+	 * @return [type]
 	 */
 	public function rateForm(array $rate_value) {
 		global $wgUser;
@@ -618,8 +616,8 @@ class RateAction extends FormlessAction {
 
     /**
      * [rateRollback description]
-     * @param  array  $rate_value [description]
-     * @return [type]             [description]
+     * @param  array  $rate_value
+     * @return [type]
      */
 	public function rateRollback(array $rate_value) {
 
@@ -636,8 +634,8 @@ class RateAction extends FormlessAction {
 
     /**
      * [rateRestore description]
-     * @param  array  $rate_value [description]
-     * @return [type]             [description]
+     * @param  array  $rate_value
+     * @return [type]
      */
 	public function rateRestore(array $rate_value) {
 
@@ -654,8 +652,8 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * [rateGet description]
-	 * @param  Article $article [description]
-	 * @return [type]           [description]
+	 * @param  Article $article
+	 * @return [type]
 	 */
 	public function rateGet(Article &$article) {
 		global $wgUser, $wgRequest;
@@ -703,9 +701,9 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [rateUpdate description]
-	 * @param  array  $input [description]
-	 * @return [type]        [description]
+	 * Update rating in database.
+	 * @param  array  $input
+	 * @return [type]
 	 */
 	public function rateUpdate(array $input) {
 		$dbw =& wfGetDB(DB_MASTER);
@@ -736,11 +734,11 @@ class RateAction extends FormlessAction {
 	}
 
     /**
-     * [rateDelete description]
-     * @param  [type] $rate_id [description]
-     * @param  [type] $page_id [description]
-     * @param  [type] $user_id [description]
-     * @return [type]          [description]
+     * delete rating from database
+     * @param  int $rate_id
+     * @param  int $page_id
+     * @param  int $user_id
+     * @return true
      */
 	public function rateDelete($rate_id, $page_id, $user_id) {
 		//echo $rate_id . $page_id . $user_id;
@@ -756,9 +754,9 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [rateSave description]
-	 * @param  array  $input [description]
-	 * @return [type]        [description]
+	 * Save rating to database
+	 * @param  array  $input
+	 * @return true
 	 */
 	public function rateSave(array $input) {
 		$dbw =& wfGetDB(DB_MASTER);
@@ -786,7 +784,7 @@ class RateAction extends FormlessAction {
 	 */
 	public function rateRead($page_id, $user_id, $rate_id) {
 
-		$dbr =& wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_SLAVE);
 
 		if ((is_numeric($rate_id)) && ($rate_id > 1)) {
 			$res = $dbr->query("SELECT * FROM `rating` WHERE `rate_id` =" . $rate_id . " LIMIT 0, 1");
