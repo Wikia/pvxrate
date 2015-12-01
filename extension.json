@@ -32,7 +32,7 @@
 		"SpecialRecentRatings": "specials/SpecialRecentRatings.php"
 	},
 	"config": {
-		"PvXRateBuildNamespace": "NS_BUILDZ",
+		"PvXRateBuildNamespace": "NS_BUILD",
 		"PvXRateBuildTalkNamespace": "NS_BUILD_TALK"
 	},
 	"Hooks": {
