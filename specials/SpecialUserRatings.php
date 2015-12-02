@@ -120,7 +120,10 @@ class SpecialUserRatings extends SpecialPage {
  		}
  	}
 
-
+	/**
+	 * Get ratings from database
+	 * @return array | false
+	 */
  	public function GetRatings() {
  		$res   = $this->DB->query("SELECT user_name, R.user_id, page_title, comment, rollback, admin_id, reason, rating1, rating2, rating3, timestamp
  			FROM rating AS R

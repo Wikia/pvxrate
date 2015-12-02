@@ -129,33 +129,10 @@ class RateAction extends FormlessAction {
 
 	}
 
-    /**
-     * [setRate description]
-     * @param array  $content_actions
-     * @param [type] $action
-     */
-    public function setRate(array &$content_actions, $action) {
-
-
-		foreach ($content_actions as $key => $val) {
-			if ($key == "talk") {
-				$ca_array[$key]   = $content_actions[$key];
-				$ca_array['rate'] = array(
-					'class' => $action === 'rate' ? 'selected' : false,
-					'text' => "Rate",
-					'href' => $this->getTitle()->getLocalUrl('action=rate')
-				);
-			} else {
-				$ca_array[$key] = $content_actions[$key];
-			}
-		}
-		$content_actions = $ca_array;
-
-	}
 
 	/**
-	 * [ratePermissions description]
-	 * @return [type]
+	 * Check permissins, and add WikiText if permissions fail.
+	 * @return boolean
 	 */
 	public function ratePermissions() {
 		global $wgUser, $wgOut, $perm_msg;
@@ -194,12 +171,12 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [rateLink description]
-	 * @param  [type] $article
-	 * @param  [type] $name
-	 * @param  [type] $action
-	 * @param  [type] $id
-	 * @return [type]
+	 * Format a link for use elsewhere
+	 * @param  Article $article reference to article
+	 * @param  string $name link title
+	 * @param  string $action sets the ?rating= request variable.
+	 * @param  string $id the build id. sets ?build=
+	 * @return string
 	 */
 	public function rateLink(&$article, $name, $action, $id) {
 		global $wgUser;
@@ -207,14 +184,14 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [ratePrint description]
-	 * @param  array  $rate_results
-	 * @param  [type] $link
-	 * @return [type]
+	 * Builds output for a specific rating
+	 * @param  array  $rate_results array containing the rating records
+	 * @param  string $link links (edit, delete) to include
+	 * @return string
 	 */
 	public function ratePrint(array $rate_results, $link) {
 		global $wgUser, $wgParser, $wgOut, $wgExtensionsPath;
-		$dbr =& wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_SLAVE);
 
 		$user_name = User::newFromId($rate_results['user_id'])->getName();
 		# check for BM status
@@ -309,13 +286,13 @@ class RateAction extends FormlessAction {
 	}
 
     /**
-     * [ratePrintAll description]
-     * @param  [type] $article
-     * @param  [type] $show_own
-     * @param  [type] $show_form
-     * @param  [type] $show_all
-     * @param  [type] $read_only
-     * @return [type]
+     * print ratings for a specific build
+     * @param  Article $article reference to Article
+     * @param  boolean $show_own Show users own rating or not
+     * @param  boolean $show_form Show rating form
+     * @param  boolean $show_all Show all current ratings
+     * @param  boolean $read_only if true, just call ratePrint
+     * @return void, prints to screen
      */
 	public function ratePrintAll($article, $show_own, $show_form, $show_all, $read_only) {
 		global $wgOut, $wgUser;
@@ -387,9 +364,9 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [ratePrintResults description]
-	 * @param  [type] $page_id
-	 * @return [type]
+	 * Gets retults and returns them for a specific page. Used inside ratePrintAll
+	 * @param  int $page_id
+	 * @return string
 	 */
 	public function ratePrintResults($page_id) {
 
@@ -410,7 +387,7 @@ class RateAction extends FormlessAction {
 		# build master's additional weighting (set e.g. to 1.5 to get 250% total weight)
 		$bm_weight = 1.0; # => 200%
 
-		$dbr =& wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_SLAVE);
 
 		# determine overall rating (equal weighting of all voters, not counting rolled back votes)
 		$res = $dbr->query("SELECT count(rating1) AS count, sum( rating1 ) AS r1, sum( rating2 ) AS r2, sum( rating3 ) AS r3
@@ -525,10 +502,10 @@ class RateAction extends FormlessAction {
 	}
 
     /**
-     * [rateCheckRights description]
-     * @param  [type] $article
-     * @param  [type] $build_id
-     * @return [type]
+     * Check Users rights
+     * @param  Article $article
+     * @param  int $build_id
+     * @return boolean
      */
 	public function rateCheckRights($article, $build_id) {
 		global $wgUser;
@@ -547,9 +524,9 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [rateForm description]
-	 * @param  array  $rate_value
-	 * @return [type]
+	 * Generates the rate form
+	 * @param  array  $rate_value Values to populate form with
+	 * @return string
 	 */
 	public function rateForm(array $rate_value) {
 		global $wgUser;
@@ -615,9 +592,9 @@ class RateAction extends FormlessAction {
 	}
 
     /**
-     * [rateRollback description]
-     * @param  array  $rate_value
-     * @return [type]
+     * Generate rating rollback form
+     * @param  array  $rate_value values to populate form with
+     * @return string
      */
 	public function rateRollback(array $rate_value) {
 
@@ -633,9 +610,9 @@ class RateAction extends FormlessAction {
 	}
 
     /**
-     * [rateRestore description]
-     * @param  array  $rate_value
-     * @return [type]
+     * Generate rating restore form
+     * @param  array  $rate_value values to populate form with
+     * @return string
      */
 	public function rateRestore(array $rate_value) {
 
@@ -651,9 +628,9 @@ class RateAction extends FormlessAction {
 	}
 
 	/**
-	 * [rateGet description]
+	 * Get rating data array, can be used with other functions.
 	 * @param  Article $article
-	 * @return [type]
+	 * @return array
 	 */
 	public function rateGet(Article &$article) {
 		global $wgUser, $wgRequest;
@@ -703,10 +680,10 @@ class RateAction extends FormlessAction {
 	/**
 	 * Update rating in database.
 	 * @param  array  $input
-	 * @return [type]
+	 * @return void
 	 */
 	public function rateUpdate(array $input) {
-		$dbw =& wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
 		if ($input['rollback'] || $input['restore']) {
 			$dbw->update('rating', array(
@@ -742,7 +719,7 @@ class RateAction extends FormlessAction {
      */
 	public function rateDelete($rate_id, $page_id, $user_id) {
 		//echo $rate_id . $page_id . $user_id;
-		$dbw =& wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
 		$dbw->delete('rating', array(
 			'rate_id' => $rate_id,
@@ -759,7 +736,7 @@ class RateAction extends FormlessAction {
 	 * @return true
 	 */
 	public function rateSave(array $input) {
-		$dbw =& wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
 		$dbw->insert('rating', array(
 			'page_id' => $input['page_id'],

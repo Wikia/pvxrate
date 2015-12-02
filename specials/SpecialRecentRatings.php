@@ -114,6 +114,9 @@ class SpecialRecentRatings extends SpecialPage {
  		}
  	}
 
+	/**
+	 * Get Ratings from database
+	 */
  	public function GetRatings() {
  		$userTbl = $this->DB->tableName('user');
 
