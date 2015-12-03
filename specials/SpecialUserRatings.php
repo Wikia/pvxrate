@@ -45,6 +45,7 @@ class SpecialUserRatings extends SpecialPage {
 	 public function execute($par = null) {
  		global $wgLang;
 
+		$this->output->addModules('ext.pvxrate');
  		$this->output->setPageTitle('User ratings');
 
  		$got_ratings = $this->GetRatings();

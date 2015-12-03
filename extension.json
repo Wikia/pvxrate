@@ -31,6 +31,18 @@
 		"SpecialUserRatings": "specials/SpecialUserRatings.php",
 		"SpecialRecentRatings": "specials/SpecialRecentRatings.php"
 	},
+	"ResourceModules": {
+		"ext.pvxrate": {
+			"styles": [
+				"css/pvxrate.css"
+			],
+			"dependencies": []
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "/",
+		"remoteExtPath": "PvXRote"
+	},
 	"config": {
 		"PvXRateBuildNamespace": "NS_BUILD",
 		"PvXRateBuildTalkNamespace": "NS_BUILD_TALK"

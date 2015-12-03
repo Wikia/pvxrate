@@ -42,6 +42,8 @@ class SpecialRecentRatings extends SpecialPage {
 	 */
 	 public function execute($par = null) {
  		global $wgLang;
+
+		$this->output->addModules('ext.pvxrate');
  		$this->output->setPageTitle('Recent ratings');
 
 

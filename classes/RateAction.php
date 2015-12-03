@@ -21,6 +21,7 @@ class RateAction extends FormlessAction {
 	function onView() {
 		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace;
 
+        $wgOut->addModules('ext.pvxrate');
         $action = $wgRequest->getText('rating');
         $article = $this->page;
 
