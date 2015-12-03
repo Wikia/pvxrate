@@ -3,6 +3,7 @@
 		"authors": ["Cameron Chunn"]
 	},
 	"pvxrate": "PvX Rate",
+	"rate": "",
 	"action-pvxrate": "perform PvX Rate actions",
 	"pvxrate_description": "Adds tab to Rate articles, List user ratings, and list recent ratings."
 }
