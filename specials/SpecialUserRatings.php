@@ -127,28 +127,31 @@ class SpecialUserRatings extends SpecialPage {
 	 */
  	public function GetRatings() {
 		global $wgPvXRateBuildNamespace;
-			$buildNamespace = @constant($wgPvXRateBuildNamespace);
-			if (!$buildNamespace) {
-				wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
-			}
 
- 			$res = $this->DB->select(
-				['rating', 'user', 'page'],
-				['user_name', 'rating.user_id', 'page_title', 'comment', 'rollback', 'admin_id', 'reason', 'rating1', 'rating2', 'rating3', 'timestamp'],
-				[
-					'rating.user_id' => $this->wgUser->getID(),
-					'page.page_namespace' => $buildNamespace
-				],
-				__METHOD__,
-				[
-						"ORDER BY"=> "rating.timestamp DESC",
-						"LIMIT" => '200'
-				],
-				[
-					'user' => array('LEFT JOIN', array('rating.user_id=user.user_id')),
-					'page' => array('LEFT JOIN', array('rating.page_id=page.page_id'))
-				]
-			);
+		$buildNamespace = defined($wgPvXRateBuildNamespace);
+		if (!$buildNamespace) {
+			wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
+		} else {
+			$buildNamespace = constant($wgPvXRateBuildNamespace);
+		}
+
+		$res = $this->DB->select(
+			['rating', 'user', 'page'],
+			['user_name', 'rating.user_id', 'page_title', 'comment', 'rollback', 'admin_id', 'reason', 'rating1', 'rating2', 'rating3', 'timestamp'],
+			[
+				'rating.user_id' => $this->wgUser->getID(),
+				'page.page_namespace' => $buildNamespace
+			],
+			__METHOD__,
+			[
+					"ORDER BY"=> "rating.timestamp DESC",
+					"LIMIT" => '200'
+			],
+			[
+				'user' => array('LEFT JOIN', array('rating.user_id=user.user_id')),
+				'page' => array('LEFT JOIN', array('rating.page_id=page.page_id'))
+			]
+		);
 
  		$count = $this->DB->numRows($res);
  		if ($count > 0) {

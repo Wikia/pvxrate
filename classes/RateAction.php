@@ -26,10 +26,13 @@ class RateAction extends FormlessAction {
         $article = $this->page;
 
 
-        $buildNamespace = @constant($wgPvXRateBuildNamespace);
+        $buildNamespace = defined($wgPvXRateBuildNamespace);
         if (!$buildNamespace) {
             wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
-        }
+        } else {
+			$buildNamespace = constant($wgPvXRateBuildNamespace);
+		}
+        
 		////////////////////////////////////////////////////////////////////
 		// Checking permissions. if now, lets quit.
 		////////////////////////////////////////////////////////////////////
