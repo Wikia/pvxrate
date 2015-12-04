@@ -120,11 +120,16 @@ class SpecialRecentRatings extends SpecialPage {
 	 * Get Ratings from database
 	 */
  	public function GetRatings() {
+		$buildNamespace = @constant($wgPvXRateBuildNamespace);
+        if (!$buildNamespace) {
+            wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
+        }
+
 		$res = $this->DB->select(
 			['rating', 'user', 'page'],
 			['user_name', 'rating.user_id', 'page_title', 'comment', 'rollback', 'admin_id', 'reason', 'rating1', 'rating2', 'rating3', 'timestamp'],
 			[
-				'page.page_namespace' => '100'
+				'page.page_namespace' => $buildNamespace
 			],
 			__METHOD__,
 			[
