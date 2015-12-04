@@ -44,7 +44,7 @@ class SpecialRecentRatings extends SpecialPage {
  		global $wgLang;
 
 		$this->output->addModules('ext.pvxrate');
- 		$this->output->setPageTitle('Recent ratings');
+ 		$this->output->setPageTitle( wfMessage('recentratings') );
 
 
  		$timeprevious = '';

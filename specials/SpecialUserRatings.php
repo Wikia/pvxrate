@@ -46,7 +46,7 @@ class SpecialUserRatings extends SpecialPage {
  		global $wgLang;
 
 		$this->output->addModules('ext.pvxrate');
- 		$this->output->setPageTitle('User ratings');
+ 		$this->output->setPageTitle( wfMessage('userratings') );
 
  		$got_ratings = $this->GetRatings();
  		if ($got_ratings) {
@@ -116,7 +116,7 @@ class SpecialUserRatings extends SpecialPage {
  				}
  			}
  		} else {
- 			$out = "No ratings found for this user.";
+ 			$out = wfMessage('no-ratings-found');
  			$this->output->addWikiText($out);
  		}
  	}
