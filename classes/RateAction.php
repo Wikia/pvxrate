@@ -748,7 +748,7 @@ class RateAction extends FormlessAction {
 			'rating1' => $input['rating'][0],
 			'rating2' => $input['rating'][1],
 			'rating3' => $input['rating'][2]
-		), __method__);
+		), __METHOD__);
 		$dbw->commit();
 		return true;
 	}

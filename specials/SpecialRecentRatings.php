@@ -159,6 +159,6 @@ class SpecialRecentRatings extends SpecialPage {
 	 * @return string
 	 */
 	protected function getGroupName() {
-		return 'other'; //Change to display in a different category on Special:SpecialPages.
+		return 'pvx'; //Change to display in a different category on Special:SpecialPages.
 	}
 }

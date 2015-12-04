@@ -5,5 +5,8 @@
 	"pvxrate": "PvX Rate",
 	"rate": "",
 	"action-pvxrate": "perform PvX Rate actions",
+	"specialpages-group-pvx": "PvX",
+	"recentratings": "View Recent Ratings",
+	"userratings": "View User Ratings",
 	"pvxrate_description": "Adds tab to Rate articles, List user ratings, and list recent ratings."
 }
