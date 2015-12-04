@@ -120,16 +120,22 @@ class SpecialRecentRatings extends SpecialPage {
 	 * Get Ratings from database
 	 */
  	public function GetRatings() {
- 		$userTbl = $this->DB->tableName('user');
-
- 		$res = $this->DB->query("
- 			SELECT user_name, R.user_id, page_title, comment, rollback, admin_id, reason, rating1, rating2, rating3, timestamp
- 		FROM rating AS R
- 		LEFT JOIN $userTbl AS u1 ON R.user_id = u1.user_id
- 		LEFT JOIN page AS p1 ON R.page_id = p1.page_id
- 		WHERE p1.page_namespace = 100
- 		ORDER BY R.timestamp DESC
- 		LIMIT 0 , 200");
+		$res = $this->DB->select(
+			['rating', 'user', 'page'],
+			['user_name', 'rating.user_id', 'page_title', 'comment', 'rollback', 'admin_id', 'reason', 'rating1', 'rating2', 'rating3', 'timestamp'],
+			[
+				'page.page_namespace' => '100'
+			],
+			__METHOD__,
+			[
+					"ORDER BY"=> "rating.timestamp DESC",
+					"LIMIT" => '200'
+			],
+			[
+				'user' => array('LEFT JOIN', array('rating.user_id=user.user_id')),
+				'page' => array('LEFT JOIN', array('rating.page_id=page.page_id'))
+			]
+		);
 
  		$out = array();
  		while ($row = $this->DB->fetchObject($res)) {
