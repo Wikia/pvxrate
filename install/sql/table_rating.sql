@@ -1,4 +1,4 @@
-CREATE TABLE `rating` (
+CREATE TABLE /*_*/rating (
     `rate_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
     `page_id` int(8) NOT NULL,
     `user_id` int(5) NOT NULL,
