@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": ["Cameron Chunn"]
+	},
+	"pvxrate": "PvX Rate",
+	"rate": "",
+	"action-pvxrate": "perform PvX Rate actions",
+	"specialpages-group-pvx": "PvX",
+	"no-ratings-found": "No ratings found for this user.",
+	"recentratings": "Recent Ratings",
+	"userratings": "User Ratings",
+	"pvxrate_description": "Adds tab to Rate articles, List user ratings, and list recent ratings."
+}
