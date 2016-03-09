@@ -19,7 +19,7 @@ class RateAction extends FormlessAction {
 	 * @return bool
 	 */
 	function onView() {
-		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace;
+		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace,$wgScriptPath;
 
         $wgOut->addModules('ext.pvxrate');
         $action = $wgRequest->getText('rating');
@@ -194,7 +194,7 @@ class RateAction extends FormlessAction {
 	 * @return string
 	 */
 	public function ratePrint(array $rate_results, $link) {
-		global $wgUser, $wgParser, $wgOut;
+		global $wgUser, $wgParser, $wgOut, $wgScriptPath;
 		$dbr = wfGetDB(DB_SLAVE);
 
 		$user_name = User::newFromId($rate_results['user_id'])->getName();
@@ -262,7 +262,7 @@ class RateAction extends FormlessAction {
 		}
 		$out = '
 		<div class="rating"><table border="1" cellpadding="0" cellspacing="3">
-		<tr><td class="tdrating"><div style="width:' . $final_tbl . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r1.jpg') .');"><span>Overall</span></div></td>
+		<tr><td class="tdrating"><div style="width:' . $final_tbl . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r1.jpg') .');"><span>Overall</span></div></td>
 		    <td class="tdresult">' . sprintf('%3.1f', round($cur_score * 10) / 10) . '</td>
 		    <td class="tdcomment" rowspan="4">
 			<table border="0" style="border:0px;">
@@ -274,13 +274,13 @@ class RateAction extends FormlessAction {
 		        </table>
                             </td>
 		 </tr><tr>
-                            <td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
+                            <td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
 		     <td class="tdresult">' . $rate[1] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
+		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
 		     <td class="tdresult">' . $rate[2] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
+		     <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
 		     <td class="tdresult">' . $inno_out . '</td>
 		 </tr>
 		 </table>
@@ -454,16 +454,16 @@ class RateAction extends FormlessAction {
 		$out .= '<table border="0" cellpadding="0" cellspacing="0"><tr>';
 		$out .= '<td><div class="sum"><table border="0" cellpadding="0" cellspacing="3">
             <tr><td class="tdrating"><div style="width:' . round($final[0] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r1.jpg') . ');"><span>Overall</span></div></td>
+                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r1.jpg') . ');"><span>Overall</span></div></td>
      <td class="tdresult">' . sprintf('%4.2f', round($final[0] * 100) / 100) . '</td></tr>
      <tr><td class="tdrating"><div style="width:' . round($final[1] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
+                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
      <td class="tdresult">' . sprintf('%4.2f', round($final[1] * 100) / 100) . '</td></tr>
             <tr><td class="tdrating"><div style="width:' . round($final[2] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
+                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
             <td class="tdresult">' . sprintf('%4.2f', round($final[2] * 100) / 100) . '</td></tr>
             <tr><td class="tdrating"><div style="width:' . round($final[3] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
+                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
      <td class="tdresult">' . sprintf('%4.0f', round($final[3] * 20)) . '%</td></tr>
      </table></div></td>';
 
@@ -483,12 +483,12 @@ class RateAction extends FormlessAction {
 			# plot
 			$out .= '<td><div class="result"><table border="1" cellpadding="0" cellspacing="3"><tr>
                     <td colspan="6" class="tdresult"><span onmouseover="return overlib(div(\'load' . $rate_names[$c] . '\').innerHTML, WRAP, CENTER, WIDTH, 300, OFFSETY, -25, OFFSETX, -247, VAUTO);" onmouseout="return nd();">' . $rate_names[$c] . '</span></td></tr>
-                    <tr><td class="tdrating"><div style="height:' . ($histo[$c][0]) . 'px; width:13px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][1]) . 'px; width:13px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][2]) . 'px; width:13px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][3]) . 'px; width:13px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][4]) . 'px; width:13px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-                	 <td class="tdrating"><div style="height:' . ($histo[$c][5]) . 'px; width:13px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+                    <tr><td class="tdrating"><div style="height:' . ($histo[$c][0]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][1]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][2]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][3]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+             		 <td class="tdrating"><div style="height:' . ($histo[$c][4]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+                	 <td class="tdrating"><div style="height:' . ($histo[$c][5]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
 	     </tr><tr>
 		 <td class="tdresult">0</td>
 		 <td class="tdresult">1</td>
