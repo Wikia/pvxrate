@@ -277,7 +277,7 @@ class RateAction extends FormlessAction {
                             <td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
 		     <td class="tdresult">' . $rate[1] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r1.jpg') . ');"><span>Universality</span></div></td>
+		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
 		     <td class="tdresult">' . $rate[2] . '</td>
 		 </tr><tr>
 		     <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . wfExpandUrl('extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
