@@ -19,7 +19,7 @@ class RateAction extends FormlessAction {
 	 * @return bool
 	 */
 	function onView() {
-		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace,$wgScriptPath;
+		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace;
 
         $wgOut->addModules('ext.pvxrate');
         $action = $wgRequest->getText('rating');
