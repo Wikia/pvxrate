@@ -37,7 +37,7 @@ class RateAction extends FormlessAction {
 		// Checking permissions. if now, lets quit.
 		////////////////////////////////////////////////////////////////////
 		if (!$this->getUser()->isAllowed('ratebuild')) {
-			$wgOut->permissionRequired('ratebuild');
+			throw new PermissionsError('ratebuild');
 			return false;
 		}
 
