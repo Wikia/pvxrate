@@ -22,6 +22,4 @@ class PvXRateHooks {
 			__DIR__ . '/install/sql/table_rating.sql', true ) );
 		return true;
 	}
-
-
 }

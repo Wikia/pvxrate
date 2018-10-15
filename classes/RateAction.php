@@ -3,16 +3,16 @@
 class RateAction extends FormlessAction {
 
 
-    /**
-     * Return the name of the action
-     * @return string
-     */
-    public function getName() {
-        return 'rate';
-    }
+	/**
+	 * Return the name of the action
+	 * @return string
+	 */
+	public function getName() {
+		return 'rate';
+	}
 
 
-    /**
+	/**
 	 * Handle viewing of action.
 	 * @param  string $action
 	 * @param  Article $article
@@ -21,15 +21,15 @@ class RateAction extends FormlessAction {
 	function onView() {
 		global $wgOut, $wgUser, $wgRequest,$wgPvXRateBuildNamespace;
 
-        $wgOut->addModules('ext.pvxrate');
-        $action = $wgRequest->getText('rating');
-        $article = $this->page;
+		$wgOut->addModules('ext.pvxrate');
+		$action = $wgRequest->getText('rating');
+		$article = $this->page;
 
 
-        $buildNamespace = defined($wgPvXRateBuildNamespace);
-        if (!$buildNamespace) {
-            wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
-        } else {
+		$buildNamespace = defined($wgPvXRateBuildNamespace);
+		if (!$buildNamespace) {
+			wfWarn('The PvXRateBuildNamespace defined in PvX Rate\'s extension.json file ('.$wgPvXRateBuildNamespace.') is not a valid namespace.',2);
+		} else {
 			$buildNamespace = constant($wgPvXRateBuildNamespace);
 		}
 
@@ -49,18 +49,18 @@ class RateAction extends FormlessAction {
 
 		if ($this->ratePermissions()) {
 			if (($wgRequest->getText('action') == 'rate')
-            && ($this->getTitle()->getNamespace() !== NS_SPECIAL)
-            && ($this->getTitle()->getNamespace() == $buildNamespace)
-            && ($article->getID() !== 0)) {
+			&& ($this->getTitle()->getNamespace() !== NS_SPECIAL)
+			&& ($this->getTitle()->getNamespace() == $buildNamespace)
+			&& ($article->getID() !== 0)) {
 
-                // page title
+				// page title
 				$wgOut->setPageTitle('Build rating');
 
 				// rating=delete|edit|rollback
 				$posted_action = $wgRequest->getText('rating');
 				$posted_build  = $wgRequest->getText('build');
 				$posted_update = $wgRequest->getText('ratingid');
-				$rate_input    = $this->rateGet($article);
+				$rate_input	   = $this->rateGet($article);
 
 				$is_admin = $this->getUser()->isAllowed('vote_rollback');
 
@@ -68,7 +68,7 @@ class RateAction extends FormlessAction {
 				$show_all  = true;
 				$show_rate = true;
 
-				if (($posted_action == 'edit') && ($this->rateCheckRights($article, $posted_build)) ) {
+				if (($posted_action == 'edit') && ($this->rateCheckRights($article, $posted_build))) {
 					$wgOut->addHtml('<h2> Rate this build </h2>');
 					$wgOut->addHtml($this->rateForm($this->rateRead(false, false, $posted_build)));
 					$show_own = false;
@@ -109,7 +109,7 @@ class RateAction extends FormlessAction {
 							// posting was good, lets procces it.
 							$rate_input['rollback'] = 0;
 							$rate_input['admin_id'] = 0;
-							$rate_input['reason']   = '';
+							$rate_input['reason']	= '';
 							if (!$this->rateRead($article->getID(), $this->getUser()->getID(), false))
 								$this->rateSave($rate_input);
 						}
@@ -145,8 +145,8 @@ class RateAction extends FormlessAction {
 		# construct a message explaining the results
 		if ($this->getUser()->isAnon()) {
 			$perm_msg = '=== Read-only mode: You are currently not logged in. ===
-             __NOEDITSECTION__
-	     For security reasons you need to fulfill the following requirements in order to submit a vote:
+			 __NOEDITSECTION__
+		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in. Visit [[Special:Userlogin]] to log in or create a new account.
 * You need to authenticate your e-mail address.
 * You need to make at least 8 edits to the wiki.';
@@ -154,8 +154,8 @@ class RateAction extends FormlessAction {
 			return false;
 		} elseif (!$this->getUser()->mEmailAuthenticated) {
 			$perm_msg = '=== Read-only mode: Your e-mail address is not authenticated. ===
-             __NOEDITSECTION__
-	     For security reasons you need to fulfill the following requirements in order to submit a vote:
+			 __NOEDITSECTION__
+		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
 * You need to authenticate your e-mail address. Please edit/add your e-mail address using [[Special:Preferences]] and a confirmation e-mail will be sent to that address. Follow the instructions in the e-mail to confirm that the account is actually yours.
 * You need to make at least 8 edits to the wiki.';
@@ -163,8 +163,8 @@ class RateAction extends FormlessAction {
 			return false;
 		} elseif ($this->getUser()->getEditCount() < 8) {
 			$perm_msg = '=== Read-only mode: You made only ' . $this->getUser()->edits($this->getUser()->getID()) . ' edits so far. ===
-             __NOEDITSECTION__
-	     For security reasons you need to fulfill the following requirements in order to submit a vote:
+			 __NOEDITSECTION__
+		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
 * You need to authenticate your e-mail address.
 * You need to make at least 8 contributions to the wiki. A contribution is any edit to any page. A good way to get your first few contributions is adding some information about yourself to [[Special:Mypage|your userpage]].';
@@ -199,26 +199,26 @@ class RateAction extends FormlessAction {
 
 		$user_name = User::newFromId($rate_results['user_id'])->getName();
 		# check for BM status
-		$res       = $dbr->query("SELECT * FROM user_groups WHERE ug_user =" . $rate_results['user_id'] . " AND ug_group='buildmaster'");
-		$is_bm     = $dbr->numRows($res);
+		$res	   = $dbr->query("SELECT * FROM user_groups WHERE ug_user =" . $rate_results['user_id'] . " AND ug_group='buildmaster'");
+		$is_bm	   = $dbr->numRows($res);
 
 		$parserOptions = ParserOptions::newFromUser($wgUser);
 		$parserOptions->setEditSection(false);
 		$parserOptions->setTidy(true);
 		$wgParser->mShowToc = false;
 
-        //$parserOptions = new Title;
+		//$parserOptions = new Title;
 
 		$number_max = 5;
 		$number_cat = 3;
 		$tables_max = 168;
 
-		$cate      = array(
+		$cate	   = array(
 			1 => .8,
 			.2,
 			.0
 		);
-		$rate      = array(
+		$rate	   = array(
 			1 => $rate_results['rating'][0],
 			2 => $rate_results['rating'][1],
 			3 => $rate_results['rating'][2]
@@ -236,14 +236,14 @@ class RateAction extends FormlessAction {
 
 		$final_tbl = ($cur_score / $number_max) * $tables_max;
 
-        $parsedComment = $wgParser->parse($rate_results['comment'], $this->getTitle(), $parserOptions)->mText;
+		$parsedComment = $wgParser->parse($rate_results['comment'], $this->getTitle(), $parserOptions)->mText;
 
 		if ($rate_results['rollback']) {
 			$comment = '<b>Removed: </b><s>' . $parsedComment . '</s><br> <b>Reason: </b>' . $rate_results['reason'] . '<br><b>Removed by: </b> ' . User::newFromId($rate_results['admin_id'])->getName();
-			$tduser  = $user_name;
+			$tduser	 = $user_name;
 		} else {
 			$comment = $parsedComment;
-			$tduser  = $user_name;
+			$tduser	 = $user_name;
 		}
 
 		$timestamp = strtotime($rate_results['timestamp']);
@@ -263,25 +263,25 @@ class RateAction extends FormlessAction {
 		$out = '
 		<div class="rating"><table border="1" cellpadding="0" cellspacing="3">
 		<tr><td class="tdrating"><div style="width:' . $final_tbl . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r1.jpg') .');"><span>Overall</span></div></td>
-		    <td class="tdresult">' . sprintf('%3.1f', round($cur_score * 10) / 10) . '</td>
-		    <td class="tdcomment" rowspan="4">
+			<td class="tdresult">' . sprintf('%3.1f', round($cur_score * 10) / 10) . '</td>
+			<td class="tdcomment" rowspan="4">
 			<table border="0" style="border:0px;">
 			<tr><td class="tduser">' . $tduser . '</td><td class="tduser">' . $bm_str . '</td>
-                                   <td class="tdedit"><div align="right"> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
+								   <td class="tdedit"><div align="right"> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
 			</tr><tr>
-			    <td colspan="3">' . $comment . '</td>
+				<td colspan="3">' . $comment . '</td>
 			</tr>
-		        </table>
-                            </td>
+				</table>
+							</td>
 		 </tr><tr>
-                            <td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
-		     <td class="tdresult">' . $rate[1] . '</td>
+							<td class="tdrating"><div style="width:' . $sze_table[1] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
+			 <td class="tdresult">' . $rate[1] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
-		     <td class="tdresult">' . $rate[2] . '</td>
+			 <td class="tdrating"><div style="width:' . $sze_table[2] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
+			 <td class="tdresult">' . $rate[2] . '</td>
 		 </tr><tr>
-		     <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
-		     <td class="tdresult">' . $inno_out . '</td>
+			 <td class="tdrating"><div style="width:' . $sze_table[3] . 'px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
+			 <td class="tdresult">' . $inno_out . '</td>
 		 </tr>
 		 </table>
 		 </div><br>';
@@ -289,15 +289,15 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-    /**
-     * print ratings for a specific build
-     * @param  Article $article reference to Article
-     * @param  boolean $show_own Show users own rating or not
-     * @param  boolean $show_form Show rating form
-     * @param  boolean $show_all Show all current ratings
-     * @param  boolean $read_only if true, just call ratePrint
-     * @return void, prints to screen
-     */
+	/**
+	 * print ratings for a specific build
+	 * @param  Article $article reference to Article
+	 * @param  boolean $show_own Show users own rating or not
+	 * @param  boolean $show_form Show rating form
+	 * @param  boolean $show_all Show all current ratings
+	 * @param  boolean $read_only if true, just call ratePrint
+	 * @return void, prints to screen
+	 */
 	public function ratePrintAll($article, $show_own, $show_form, $show_all, $read_only) {
 		global $wgOut, $wgUser;
 
@@ -395,24 +395,24 @@ class RateAction extends FormlessAction {
 
 		# determine overall rating (equal weighting of all voters, not counting rolled back votes)
 		$res = $dbr->query("SELECT count(rating1) AS count, sum( rating1 ) AS r1, sum( rating2 ) AS r2, sum( rating3 ) AS r3
-                        FROM rating WHERE rollback != 1 AND page_id = " . $page_id);
+						FROM rating WHERE rollback != 1 AND page_id = " . $page_id);
 		$row = $dbr->fetchObject($res);
 
 		# put into local variables
 		$count = $row->count;
-		$r1    = $row->r1;
-		$r2    = $row->r2;
-		$r3    = $row->r3;
+		$r1	   = $row->r1;
+		$r2	   = $row->r2;
+		$r3	   = $row->r3;
 
 		# ask for ratings again, this time only build masters
 		$res = $dbr->query("SELECT count(rating1) AS count, sum( rating1 ) AS r1, sum( rating2 ) AS r2, sum( rating3 ) AS r3
-                        FROM rating,user_groups WHERE rollback != 1 AND page_id = " . $page_id . "
-                        AND user_id=ug_user AND ug_group='buildmaster'");
+						FROM rating,user_groups WHERE rollback != 1 AND page_id = " . $page_id . "
+						AND user_id=ug_user AND ug_group='buildmaster'");
 		$row = $dbr->fetchObject($res);
 
 		# add to the local variables
 		$bm_count = $row->count;
-		$wcount   = $count + $bm_weight * $row->count;
+		$wcount	  = $count + $bm_weight * $row->count;
 		$r1 += $bm_weight * $row->r1;
 		$r2 += $bm_weight * $row->r2;
 		$r3 += $bm_weight * $row->r3;
@@ -440,7 +440,7 @@ class RateAction extends FormlessAction {
 		for ($y = 1; $y <= 3; $y++) { # y=1..3 counts criteria
 			for ($i = 0; $i <= 5; $i++) { # i=0..5 counts rating
 				$rating[$y][$i] = $dbr->fetchObject($dbr->query("SELECT count(rating" . $y . ") AS count FROM rating
-                                     WHERE rating" . $y . " = " . $i . " AND rollback != 1 AND page_id = " . $page_id))->count;
+									 WHERE rating" . $y . " = " . $i . " AND rollback != 1 AND page_id = " . $page_id))->count;
 			}
 		}
 
@@ -453,19 +453,19 @@ class RateAction extends FormlessAction {
 		}
 		$out .= '<table border="0" cellpadding="0" cellspacing="0"><tr>';
 		$out .= '<td><div class="sum"><table border="0" cellpadding="0" cellspacing="3">
-            <tr><td class="tdrating"><div style="width:' . round($final[0] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r1.jpg') . ');"><span>Overall</span></div></td>
-     <td class="tdresult">' . sprintf('%4.2f', round($final[0] * 100) / 100) . '</td></tr>
-     <tr><td class="tdrating"><div style="width:' . round($final[1] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
-     <td class="tdresult">' . sprintf('%4.2f', round($final[1] * 100) / 100) . '</td></tr>
-            <tr><td class="tdrating"><div style="width:' . round($final[2] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
-            <td class="tdresult">' . sprintf('%4.2f', round($final[2] * 100) / 100) . '</td></tr>
-            <tr><td class="tdrating"><div style="width:' . round($final[3] * 168 / 5) . 'px;
-                    background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
-     <td class="tdresult">' . sprintf('%4.0f', round($final[3] * 20)) . '%</td></tr>
-     </table></div></td>';
+			<tr><td class="tdrating"><div style="width:' . round($final[0] * 168 / 5) . 'px;
+					background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r1.jpg') . ');"><span>Overall</span></div></td>
+	 <td class="tdresult">' . sprintf('%4.2f', round($final[0] * 100) / 100) . '</td></tr>
+	 <tr><td class="tdrating"><div style="width:' . round($final[1] * 168 / 5) . 'px;
+					background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r2.jpg') . ');"><span>Effectiveness</span></div></td>
+	 <td class="tdresult">' . sprintf('%4.2f', round($final[1] * 100) / 100) . '</td></tr>
+			<tr><td class="tdrating"><div style="width:' . round($final[2] * 168 / 5) . 'px;
+					background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r3.jpg') . ');"><span>Universality</span></div></td>
+			<td class="tdresult">' . sprintf('%4.2f', round($final[2] * 100) / 100) . '</td></tr>
+			<tr><td class="tdrating"><div style="width:' . round($final[3] * 168 / 5) . 'px;
+					background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/r4.jpg') . ');"><span>Innovation</span></div></td>
+	 <td class="tdresult">' . sprintf('%4.0f', round($final[3] * 20)) . '%</td></tr>
+	 </table></div></td>';
 
 		# histograms
 		# $rating[c][q] is number of 'q' ratings on criterion 'c'
@@ -482,21 +482,21 @@ class RateAction extends FormlessAction {
 
 			# plot
 			$out .= '<td><div class="result"><table border="1" cellpadding="0" cellspacing="3"><tr>
-                    <td colspan="6" class="tdresult"><span onmouseover="return overlib(div(\'load' . $rate_names[$c] . '\').innerHTML, WRAP, CENTER, WIDTH, 300, OFFSETY, -25, OFFSETX, -247, VAUTO);" onmouseout="return nd();">' . $rate_names[$c] . '</span></td></tr>
-                    <tr><td class="tdrating"><div style="height:' . ($histo[$c][0]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][1]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][2]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][3]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-             		 <td class="tdrating"><div style="height:' . ($histo[$c][4]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-                	 <td class="tdrating"><div style="height:' . ($histo[$c][5]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
-	     </tr><tr>
+					<td colspan="6" class="tdresult"><span onmouseover="return overlib(div(\'load' . $rate_names[$c] . '\').innerHTML, WRAP, CENTER, WIDTH, 300, OFFSETY, -25, OFFSETX, -247, VAUTO);" onmouseout="return nd();">' . $rate_names[$c] . '</span></td></tr>
+					<tr><td class="tdrating"><div style="height:' . ($histo[$c][0]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+					 <td class="tdrating"><div style="height:' . ($histo[$c][1]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+					 <td class="tdrating"><div style="height:' . ($histo[$c][2]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+					 <td class="tdrating"><div style="height:' . ($histo[$c][3]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+					 <td class="tdrating"><div style="height:' . ($histo[$c][4]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+					 <td class="tdrating"><div style="height:' . ($histo[$c][5]) . 'px; width:13px; background-image:url(' . wfExpandUrl($wgScriptPath.'/extensions/PvXRate/images/v'.($c+1).'.jpg').');"></div></td>
+		 </tr><tr>
 		 <td class="tdresult">0</td>
 		 <td class="tdresult">1</td>
 		 <td class="tdresult">2</td>
 		 <td class="tdresult">3</td>
 		 <td class="tdresult">4</td>
 		 <td class="tdresult">5</td>
-	     </tr></table></div></td><td>';
+		 </tr></table></div></td><td>';
 		}
 
 		$out .= '</tr></table><br>';
@@ -504,12 +504,12 @@ class RateAction extends FormlessAction {
 
 	}
 
-    /**
-     * Check Users rights
-     * @param  Article $article
-     * @param  int $build_id
-     * @return boolean
-     */
+	/**
+	 * Check Users rights
+	 * @param  Article $article
+	 * @param  int $build_id
+	 * @return boolean
+	 */
 	public function rateCheckRights($article, $build_id) {
 		global $wgUser;
 
@@ -548,17 +548,17 @@ class RateAction extends FormlessAction {
 		// ---------- Loading form with values.
 
 		if ($rate_value[0]) {
-			$input   = $rate_value[0]['rating'];
+			$input	 = $rate_value[0]['rating'];
 			$comment = $rate_value[0]['comment'];
-			$submit  = 'Save';
-			$update  = $rate_value[0]['rate_id'];
-			$action  = '&rating=update';
+			$submit	 = 'Save';
+			$update	 = $rate_value[0]['rate_id'];
+			$action	 = '&rating=update';
 		} else {
-			$input   = false;
+			$input	 = false;
 			$comment = '';
-			$submit  = 'Rate';
-			$update  = 0;
-			$action  = '';
+			$submit	 = 'Rate';
+			$update	 = 0;
+			$action	 = '';
 		}
 
 		// ---------- HEAD
@@ -594,11 +594,11 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-    /**
-     * Generate rating rollback form
-     * @param  array  $rate_value values to populate form with
-     * @return string
-     */
+	/**
+	 * Generate rating rollback form
+	 * @param  array  $rate_value values to populate form with
+	 * @return string
+	 */
 	public function rateRollback(array $rate_value) {
 
 		$submit = 'Remove';
@@ -612,11 +612,11 @@ class RateAction extends FormlessAction {
 		return $out;
 	}
 
-    /**
-     * Generate rating restore form
-     * @param  array  $rate_value values to populate form with
-     * @return string
-     */
+	/**
+	 * Generate rating restore form
+	 * @param  array  $rate_value values to populate form with
+	 * @return string
+	 */
 	public function rateRestore(array $rate_value) {
 
 		$submit = 'Restore';
@@ -658,7 +658,7 @@ class RateAction extends FormlessAction {
 			if ($this->getUser()->isAllowed('vote_rollback')) {
 				$rate_input['admin_id'] = $this->getUser()->getID();
 			} else {
-				$rate_input['error']     = true;
+				$rate_input['error']	 = true;
 				$rate_input['error_msg'] = 'You are not admin.';
 			}
 			return $rate_input;
@@ -670,10 +670,10 @@ class RateAction extends FormlessAction {
 			}
 			# Check if what we got are numeric, > then 0 and < then 6.
 			if ((!is_numeric($rate_input['rating'][0])) || ($rate_input['rating'][0] > 5) || ($rate_input['rating'][0] < 0) || (!is_numeric($rate_input['rating'][1])) || ($rate_input['rating'][1] > 5) || ($rate_input['rating'][1] < 0)) {
-				$rate_input['error']     = true;
+				$rate_input['error']	 = true;
 				$rate_input['error_msg'] = 'Please try again.';
 			} elseif (strlen($rate_input['comment']) < 12) {
-				$rate_input['error']     = true;
+				$rate_input['error']	 = true;
 				$rate_input['error_msg'] = 'Comment is too short..';
 			}
 			return $rate_input;
@@ -687,7 +687,7 @@ class RateAction extends FormlessAction {
 	 */
 	public function rateUpdate(array $input) {
 		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
+		$dbw->startAtomic(__METHOD__);
 		if ($input['rollback'] || $input['restore']) {
 			$dbw->update('rating', array(
 				'rollback' => $input['rollback'],
@@ -709,27 +709,27 @@ class RateAction extends FormlessAction {
 				'rate_id' => $input['rate_id']
 			));
 		}
-		$dbw->commit();
+		$dbw->endAtomic(__METHOD__);
 		return;
 	}
 
-    /**
-     * delete rating from database
-     * @param  int $rate_id
-     * @param  int $page_id
-     * @param  int $user_id
-     * @return true
-     */
+	/**
+	 * delete rating from database
+	 * @param  int $rate_id
+	 * @param  int $page_id
+	 * @param  int $user_id
+	 * @return true
+	 */
 	public function rateDelete($rate_id, $page_id, $user_id) {
 		//echo $rate_id . $page_id . $user_id;
 		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
+		$dbw->startAtomic(__METHOD__);
 		$dbw->delete('rating', array(
 			'rate_id' => $rate_id,
 			'page_id' => $page_id,
 			'user_id' => $user_id
 		));
-		$dbw->commit();
+		$dbw->endAtomic(__METHOD__);
 		return true;
 	}
 
@@ -740,7 +740,7 @@ class RateAction extends FormlessAction {
 	 */
 	public function rateSave(array $input) {
 		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
+		$dbw->startAtomic(__METHOD__);
 		$dbw->insert('rating', array(
 			'page_id' => $input['page_id'],
 			'user_id' => $input['user_id'],
@@ -751,7 +751,7 @@ class RateAction extends FormlessAction {
 			'rating2' => $input['rating'][1],
 			'rating3' => $input['rating'][2]
 		), __METHOD__);
-		$dbw->commit();
+		$dbw->endAtomic(__METHOD__);
 		return true;
 	}
 
@@ -804,32 +804,32 @@ class RateAction extends FormlessAction {
 		return $rate_out;
 	}
 
-    /**
-     * Returns some discriptive html.
-     * @return string
-     */
+	/**
+	 * Returns some discriptive html.
+	 * @return string
+	 */
 	public function rateOverLib() {
 		$out .= '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>';
 		$out .= '
 		<div id="loadEffectiveness" style="display: none;">
-		    <div style="border:1px; border-color:#CCCCCC; border-collapse:collapse; border-style:solid; width:300px; background-color:#FFFFFF; padding:5px;">
-		        <div style="width:300px; font-size:12px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Effectiveness</div>
-		        <div style="width:300px; font-size:11px; font-family:Arial, Helvetica, sans-serif;">This criterion describes how effective the build does what it was designed for. That is, how much damage does a spiker build deal, a healer build heal or a protector build prevent? How good is the chance to get through the specified area with a running build or to reach and defeat the specified foes with a farming build?</div>
-		    </div>
+			<div style="border:1px; border-color:#CCCCCC; border-collapse:collapse; border-style:solid; width:300px; background-color:#FFFFFF; padding:5px;">
+				<div style="width:300px; font-size:12px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Effectiveness</div>
+				<div style="width:300px; font-size:11px; font-family:Arial, Helvetica, sans-serif;">This criterion describes how effective the build does what it was designed for. That is, how much damage does a spiker build deal, a healer build heal or a protector build prevent? How good is the chance to get through the specified area with a running build or to reach and defeat the specified foes with a farming build?</div>
+			</div>
 		</div>
 
 		<div id="loadUniversality" style="display: none;">
-		    <div style="border:1px; border-color:#CCCCCC; border-collapse:collapse; border-style:solid; width:300px; background-color:#FFFFFF; padding:5px;">
-		        <div style="width:300px; font-size:12px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Universality</div>
-		        <div style="width:300px; font-size:11px; font-family:Arial, Helvetica, sans-serif;">This criterion describes how flexible the build is when used in a situation slightly different from what the build was designed for. This includes the ability to change strategy in case a foe shows unexpected actions, in case an ally does not perform as expected, or when used in a different location than originally intended.</div>
-		    </div>
+			<div style="border:1px; border-color:#CCCCCC; border-collapse:collapse; border-style:solid; width:300px; background-color:#FFFFFF; padding:5px;">
+				<div style="width:300px; font-size:12px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Universality</div>
+				<div style="width:300px; font-size:11px; font-family:Arial, Helvetica, sans-serif;">This criterion describes how flexible the build is when used in a situation slightly different from what the build was designed for. This includes the ability to change strategy in case a foe shows unexpected actions, in case an ally does not perform as expected, or when used in a different location than originally intended.</div>
+			</div>
 		</div>
 
 		<div id="loadInnovation" style="display: none;">
-		    <div style="border:1px; border-color:#CCCCCC; border-collapse:collapse; border-style:solid; width:300px; background-color:#FFFFFF; padding:5px;">
-		        <div style="width:300px; font-size:12px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Innovation</div>
-		        <div style="width:300px; font-size:11px; font-family:Arial, Helvetica, sans-serif;">This criterion describes how new the idea behind this build is. Does it use a new approach for dealing with a known task or even act as a precursor for dealing with a previously unconsidered task? To what extend is it expected to become a prototype for a new class of builds?</div>
-		    </div>
+			<div style="border:1px; border-color:#CCCCCC; border-collapse:collapse; border-style:solid; width:300px; background-color:#FFFFFF; padding:5px;">
+				<div style="width:300px; font-size:12px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Innovation</div>
+				<div style="width:300px; font-size:11px; font-family:Arial, Helvetica, sans-serif;">This criterion describes how new the idea behind this build is. Does it use a new approach for dealing with a known task or even act as a precursor for dealing with a previously unconsidered task? To what extend is it expected to become a prototype for a new class of builds?</div>
+			</div>
 		</div>
 		';
 		return $out;
