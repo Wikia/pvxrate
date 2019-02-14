@@ -7,7 +7,11 @@
 		"Cameron Chunn"
 	],
 	"descriptionmsg": "pvxrate_description",
+	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.29.0"
+	},
 	"GroupPermissions": {
 		"user": {
 			"ratebuild": true
