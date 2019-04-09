@@ -140,6 +140,10 @@ class RateAction extends FormlessAction {
 	 */
 	public function ratePermissions() {
 		global $wgUser, $wgOut, $perm_msg;
+		
+		$configfactory = MediaWikiServices::getInstance()->getConfigFactory();
+		$config = $configfactory->makeConfig('PvX Rate');
+		$editsReq = $config->get('PVXRateEditsRequired');
 
 		# check if user allowed to rate this build
 		# construct a message explaining the results
@@ -149,7 +153,7 @@ class RateAction extends FormlessAction {
 		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in. Visit [[Special:Userlogin]] to log in or create a new account.
 * You need to authenticate your e-mail address.
-* You need to make at least 8 edits to the wiki.';
+* You need to make at least ' . $editsReq . ' edits to the wiki.';
 			$wgOut->addWikiText($perm_msg);
 			return false;
 		} elseif (!$this->getUser()->mEmailAuthenticated) {
@@ -158,16 +162,16 @@ class RateAction extends FormlessAction {
 		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
 * You need to authenticate your e-mail address. Please edit/add your e-mail address using [[Special:Preferences]] and a confirmation e-mail will be sent to that address. Follow the instructions in the e-mail to confirm that the account is actually yours.
-* You need to make at least 8 edits to the wiki.';
+* You need to make at least ' . $editsReq . ' edits to the wiki.';
 			$wgOut->addWikiText($perm_msg);
 			return false;
-		} elseif ($this->getUser()->getEditCount() < 8) {
+		} elseif ($this->getUser()->getEditCount() < $editsReq) {
 			$perm_msg = '=== Read-only mode: You made only ' . $this->getUser()->edits($this->getUser()->getID()) . ' edits so far. ===
 			 __NOEDITSECTION__
 		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
 * You need to authenticate your e-mail address.
-* You need to make at least 8 contributions to the wiki. A contribution is any edit to any page. A good way to get your first few contributions is adding some information about yourself to [[Special:Mypage|your userpage]].';
+* You need to make at least ' . $editsReq . ' contributions to the wiki. A contribution is any edit to any page. A good way to get your first few contributions is adding some information about yourself to [[Special:Mypage|your userpage]].';
 			$wgOut->addWikiText($perm_msg);
 			return false;
 		}
