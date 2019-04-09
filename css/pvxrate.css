@@ -536,7 +536,7 @@ table.rating_table td {
 	border-color:#f5f5f5;
 	vertical-align:top;
 	padding-left:5px;
-
+	overflow-y:auto;
 }
 
 .rating td.tduser {
