@@ -142,7 +142,7 @@ class RateAction extends FormlessAction {
 		global $wgUser, $wgOut, $perm_msg;
 		
 		$configfactory = MediaWikiServices::getInstance()->getConfigFactory();
-		$config = $configfactory->makeConfig('PvX Rate');
+		$config = $configfactory->makeConfig('main');
 		$editsReq = $config->get('PVXRateEditsRequired');
 
 		# check if user allowed to rate this build
