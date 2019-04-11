@@ -145,7 +145,7 @@ class RateAction extends FormlessAction {
 		
 		$configfactory = MediaWikiServices::getInstance()->getConfigFactory();
 		$config = $configfactory->makeConfig('main');
-		$editsReq = $config->get('PVXRateEditsRequired');
+		$editsReq = $config->get('PvXRateEditsRequired');
 
 		# check if user allowed to rate this build
 		# construct a message explaining the results
