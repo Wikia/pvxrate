@@ -168,7 +168,7 @@ class RateAction extends FormlessAction {
 			$wgOut->addWikiText($perm_msg);
 			return false;
 		} elseif ($this->getUser()->getEditCount() < $editsReq) {
-			$perm_msg = '=== Read-only mode: You made only ' . $this->getUser()->edits($this->getUser()->getID()) . ' edits so far. ===
+			$perm_msg = '=== Read-only mode: You made only ' . $this->getUser()->getEditCount() . ' edits so far. ===
 			 __NOEDITSECTION__
 		 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
