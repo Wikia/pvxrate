@@ -23,7 +23,7 @@ class SpecialRecentRatings extends SpecialPage {
 		global $wgRequest, $wgUser, $wgOut;
 		parent::__construct(
 			'RecentRatings', // name
-			null, //'pvxrate', // required user right
+			null, // required user right
 			true // display on Special:Specialpages
 		);
 		$this->wgRequest	= $wgRequest;
@@ -72,7 +72,7 @@ class SpecialRecentRatings extends SpecialPage {
  					$user_link = '';
  				}
 
- 				$page_link = '[[Build:' . $array['page_title'] . '|' . $array['page_title'] . ']] - [[Build_talk:' . $array['page_title'] . '|talk]] - [http://www.gwpvx.com/index.php?title=Build:' . str_replace(" ", "_", $array['page_title']) . '&action=rate Rate]';
+ 				$page_link = '[[Build:' . $array['page_title'] . '|' . $array['page_title'] . ']] - [[Build_talk:' . $array['page_title'] . '|talk]] - [{{FULLURL:Build:' . str_replace(" ", "_", $array['page_title']) . '|action=rate}} Rate]';
 
  				if ($array['admin_id']) {
  					$admin_name = User::newFromId($array['admin_id'])->getName();

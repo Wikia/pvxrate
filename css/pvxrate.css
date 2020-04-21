@@ -1,452 +1,15 @@
-/* pvxbuild.css -- coppied here by TOR */
+/* pvxrating.css */
 
-div.pvx_overlib {
-    position:relative;
+/** NEW VOTES and EDIT VOTES*/
+/* wrapper for the Edit vote/New vote */
+.ratingform {
 	border:1px;
-	border-color:#78796c;
-	border-style:solid;
-	height:150px;
-	background-color:#ffffff;
-    position:relative;
-	padding:1px;
+	border-style:dashed;
+	border-color:#aaaaaa;
+	padding:14px;
 }
 
-div.pvx_campaign {
-	bottom: 0px;
-	right:-1px;
-	position:absolute;
-	height:18px;
-	background-color:#78796c;
-	overflow:hidden;
-	z-index:2;
-	color:#FFFFFF;
-	font-family:Tahoma;
-	font-weight:bold;
-	font-size:12px;
-	text-transform:capitalize;
-	text-align:center;
-	letter-spacing:1px;
-	vertical-align:top;
-	padding-left:13px;
-	padding-right:9px;
-}
-
-div.pvx_mastery {
-	bottom: 13px;
-	left:65px;
-	position:absolute;
-	height:17px;
-	overflow:hidden;
-	z-index:2;
-	color:#78796c;
-	font-family:Tahoma;
-	font-weight:bold;
-	font-size:12px;
-	vertical-align:bottom;
-}
-
-/* SKILL INFO, NAME, TYPE, PROFF. */
-
-div.pvx_description {
-	position: relative;
-	background-color:#fafaf7;
-	background-repeat: no-repeat;
-	background-position:right top;
-	height:148px;
-	z-index:1;
-	margin-left:64px;
-}
-
-div.pvx_normal_skill {
-	position:relative;
-	color:#252525;
-	height:22px;
-	font-family:Tahoma;
-	font-size:18px;
-	font-weight:bold;
-	top:7px;
-	margin-top:1px;
-}
-
-div.pvx_elite_skill {
-	position:relative;
-	color:#e8a400;
-	height:22px;
-	font-family:Tahoma;
-	font-size:18px;
-	font-weight:bold;
-	top:7px;
-	margin-top:1px;
-}
-
-div.pvx_type {
-	position:relative;
-	color:#757575;
-	font-family:Tahoma;
-	font-size:13px;
-	font-weight:bold;
-	margin-top:6px;
-}
-
-/* SKILL INFO, FULL TEXT DESCRIPTION */
-
-div.pvx_skill_info {
-	font-family:Tahoma;
-	font-size:12px;
-	position:relative;
-	margin-top:6px;
-	margin-right:6px;
-}
-
-span.variable {
-	color: #299900; font-weight: bold;
-}
-
-span.expert {
-	color: #025577;
-}
-
-/* A T T R I B U T E S */
-
-div.pvx_attrib_list {
-	position: absolute;
-	background-color:#fafaf7;
-	background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/skillbg.jpg);
-	background-repeat: no-repeat;
-	background-position:0 1px;
-	height:149px;
-	width:64px;
-	left:1px;
-	top:1px;
-	z-index:1000;
-}
-
-div.pvx_attrib_bg {
-	position: absolute;
-	height:126px;
-	width:42px;
-	left:10px;
-	top:10px;
-	z-index:1;
-	margin:1px;
-	margin-top:2px;
-}
-
-div.pvx_attrib_bg img {
-	padding: 1px;
-	height:40px;
-	width:40px;
-}
-
-#pvx_attributes
-{
-	margin: 0;
-	padding: 0;
-	padding-left: 7px;
-}
-
-#pvx_attributes div
-{
-	width:18px;
-	height:18px;
-	font-size:11px;
-	font-weight:bold;
-	font-family:Tahoma;
-	padding-left:15px;
-	margin-top:4px;
-}
-
-/* 5 SKILL ATTRIBUTE TO CHOOSE */
-
-#pvx_attributes #pvx_ener
-{
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/energy.gif);
-	background-repeat: no-repeat;
-	background-position:0 1px;
-}
-
-#pvx_attributes #pvx_rech
-{
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/recharge.gif);
-	background-repeat: no-repeat;
-	background-position:0 1px;
-}
-
-#pvx_attributes #pvx_cast
-{
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/activation.gif);
-	background-repeat: no-repeat;
-	background-position:0 1px;
-}
-
-#pvx_attributes #pvx_eregen
-{
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/upkeep.gif);
-	background-repeat: no-repeat;
-	background-position:0 1px;
-}
-
-#pvx_attributes #pvx_adre
-{
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/adrenaline.gif);
-	background-repeat: no-repeat;
-	background-position:0 1px;
-}
-
-#pvx_attributes #pvx_cast span
-{
-	color:#770077;
-	text-decoration:underline;
-}
-
-#pvx_attributes #pvx_ener span
-{
-	color:#448800;
-	text-decoration:underline;
-}
-
-
-/* ---------------------------------------------------------- */
-
-div.main {
-	width:650px;
-	margin: 0;
-	padding: 0;
-}
-
-.type{
-	width:597px;
-	float: left;
-}
-
-.type span {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 15px;
-    position: relative;
-    bottom: 0px;
-    left: 5px;
-}
-
-.profession {
-	width:597px;
-	float: left;
-}
-
-.attribute_name {
-	background-color:#fafafa;
-	border-bottom:1px;
-	border-bottom-color:#dddddd;
-	border-bottom-style:solid;
-	border-right:1px;
-	border-right-color:#dddddd;
-	border-right-style:solid;
-	margin-top:3px;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:13px;
-	padding:2px;
-	padding-left:5px;
-}
-
-.attribute_rank {
-	background-color:#fafafa;
-	border-bottom:1px;
-	border-bottom-color:#dddddd;
-	border-bottom-style:solid;
-	border-right:1px;
-	border-right-color:#dddddd;
-	border-right-style:solid;
-	margin-top:3px;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:13px;
-	padding:2px;
-	padding-left:5px;
-	float:right;
-}
-
-.template {
-	width:596px;
-	float: left;
-	background-color:#fafafa;
-	border-bottom:1px;
-	border-bottom-color:#dddddd;
-	border-bottom-style:solid;
-	border-right:1px;
-	border-right-color:#dddddd;
-	border-right-style:solid;
-	margin-top:3px;
-	padding-top:2px;
-	padding-bottom:3px;
-	height:22px;
-}
-
-.template input {
-	font-family: courier;
-	font-weight:normal;
-	font-size:12px;
-	background-color:#ffffff;
-	height:15px;
-	border:1px solid #dddddd;
-    color:#333333;
-    margin-top:2px;
-	width:368px;
-    padding-left:2px;
-}
-
-.template img {
-    display:inline;
-    vertical-align: top;
-    margin-top:2px;
-    margin-left:0px;
-    margin-right:0px;
-    width: 66px;
-    height: 19px;
-}
-
-
-.template_name {
-	font-family: Arial;
-	font-weight:bold;
-	font-size:12px;
-	float:left;
-	margin-left:5px;
-	margin-right:5px;
-	letter-spacing:1px;
-	margin-top:2px;
-	color:#666666;
-}
-
-.template_input {
-	float:right;
-	margin-right:4px;
-}
-
-.skill_box {
-	width:70px;
-	height:127px;
-	background-color:#f6f6f6;
-    border-bottom:1px;
-    border-bottom-color:#dddddd;
-    border-bottom-style:solid;
-    border-right:1px;
-    border-right-color:#dddddd;
-    border-right-style:solid;
-    border-top:1px;
-    border-top-color:#fafafa;
-    border-top-style:solid;
-    border-left:1px;
-    border-left-color:#fafafa;
-    border-left-style:solid;
-	float:left;
-	margin-right:3px;
-	margin-top:3px;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:10px;
-	text-align:center;
-    vertical-align: text-bottom;
-	line-height:13px;
-    position:relative;
-}
-
-.skill_icon {
-	height:64px;
-	width:64px;
-	background-color:#ffffff;
-	margin:3px;
-	margin-bottom:7px;
-}
-
-
-/* ------------------------------------------------------------------------- */
-
-.pvx_icon-normal_skill {
-    position:absolute;
-    top: 3px;
-    right: 4px;
-}
-
-.pvx_icon-elite_skill {
-    position:absolute;
-    top: 6px;
-    right: 6px;
-}
-
-
-.pvx-type-du {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Dual-Attack.png);
-    height:20px;
-    width:20px;
-}
-
-.pvx-type-en
-{
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Enchantment-Spell.png);
-    height:20px;
-    width:20px;
-}
-
-.pvx-type-he
-{
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Hex-Spell.png);
-    height:20px;
-    width:20px;
-}
-.pvx-type-le
-{
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Lead-Attack.png);
-    height:20px;
-    width:20px;
-}
-.pvx-type-of
-{
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Off-Hand-Attack.png);
-    height:20px;
-    width:20px;
-}
-.pvx-type-wea
-{
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Weapon-Spell.png);
-    height:20px;
-    width:20px;
-}
-
-.pvx-type-fl
-{
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Enchantment-Spell.png);
-    height:20px;
-    width:20px;
-}
-
-
-/* pvxrating.css -- imported by TOR */
-div.rating_input
-{
-	background:#ffffff;
-	padding: 6px;
-	border-color:#e5e5e5;
-	border-style:solid;
-	border-width:1px;
-	border-top:0px;
-	border-left:0px;
-	border-right:0px;
-	border-collapse:separate;
-	display:inline;
-}
-
-span.rating_cat {
-	font-weight:bold;
-	font-family:Verdana, Arial, Helvetica, sans-serif;
-	vertical-align:top;
-	cursor:pointer;
-	color:#372207;
-	border-bottom:1px; border-bottom-color:#786143; border-bottom-style:dashed; border-bottom-width:1px;
-}
-
-div.rating_input span {
-	padding: 6px;
-	font-size:14px;
-	font-weight:bold;
-	display:inline;
-}
+/* table for the Edit vote/New vote */
 table.rating_table {
 	border:0px;
 	border-style:solid;
@@ -455,18 +18,24 @@ table.rating_table td {
 	padding:6px;
 }
 
-.ratingform {
-	border:1px;
-	border-style:dashed;
-	border-color:#aaaaaa;
-	padding: 14px;
+/* below the rating categories on the vote - Edit vote/New vote */
+span.rating_cat {
+	font-weight:bold;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	vertical-align:top;
+	cursor:pointer;
+	color:#372207;
+	border-bottom:1px dashed #786143;
 }
 
-.ratingform input.button {
-	margin-left: 120px;
+/* below the circular the buttons - Edit vote/New vote */
+div.rating_input {
+	padding:6px;
+	border-bottom:1px solid #e5e5e5;
+	display:inline;
 }
 
-
+/* text reasoning for the vote */
 .rating_text {
 	width:312px;
 	border-color:#e5e5e5;
@@ -474,101 +43,46 @@ table.rating_table td {
 	border-width:1px;
 }
 
-.aedit {
-	font-size: x-small;
-	float: right;
-}
-
-
-.rating {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	width:100%;
-}
-
-
-.rating table {
-	border:0px;
-	border-style:dashed;
-	border-color:#aaaaaa;
-	width:100%;
-}
-
-.rating div {
-	height:17px;
-}
-
-.rating span {
-	letter-spacing:1px;
-	padding-left:3px;
-}
-.rating td.tdrating {
-	width:170px;
-	background-position:bottom;
-	background-repeat:repeat-x;
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-size:9px;
-	font-family:Arial, Helvetica, sans-serif;
-	vertical-align:bottom;
-	color:#666666;
-	padding:7px;
-}
-
-.rating td.tdresult {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:12px;
-	font-weight:bold;
-	vertical-align:middle;
-	text-align:center;
-	width:35px;
-
-}
-
-.rating td.tdcomment {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	vertical-align:top;
-	padding-left:5px;
-	overflow-y:auto;
-}
-
-.rating td.tduser {
-	font-family:Arial, Helvetica, sans-serif;
+/* number labels for the circular buttons - Edit vote/New vote */
+div.rating_input span {
+	padding:6px;
 	font-size:14px;
 	font-weight:bold;
+	display:inline;
 }
 
-.rating td.tdedit {
-	font-size:10px;
-	font-family:Verdana, Arial, Helvetica, sans-serif;
-	text-align:right;
+/* save button - edit vote/new vote */
+.ratingform input.button {
+	margin-left:120px;
 }
 
+/* RATING BAR AND HISTOGRAM COLORS - ALL VOTES */
+/* Vertical bars */
+.v0, .v1, .v2, .v3, .v4 { width:17px; }
+.v0 { background-image:url(../images/v0.jpg); } /* whitesmoke */
+.v1 { background-image:url(../images/v1.jpg); } /* yellow */
+.v2 { background-image:url(../images/v2.jpg); } /* peach */
+.v3 { background-image:url(../images/v3.jpg); } /* blue */
+.v4 { background-image:url(../images/v4.jpg); } /* green */
+
+/* Horizontal bars */
+.r0, .r1, .r2, .r3, .r4 { height:17px; }
+.r0 { background-image:url(../images/r0.jpg); } /* whitesmoke */
+.r1 { background-image:url(../images/r1.jpg); } /* yellow */
+.r2 { background-image:url(../images/r2.jpg); } /* peach */
+.r3 { background-image:url(../images/r3.jpg); } /* blue */
+.r4 { background-image:url(../images/r4.jpg); } /* green */
 
 
-
-
-
-
-
-.sum table {
+/** OVERALL SCORE SUMMARY */
+/* TOTAL horizontal ratings table at the top-left of the page */
+.sum > table {
 	border:1px;
 	border-style:solid;
 	border-color:#f3f3f3;
 }
 
-.sum div {
-	height:17px;
-	letter-spacing:1px;
-}
-
+/* TOTAL horizontal bar chart container cell */
 .sum td.tdrating {
 	width:170px;
 	background-position:bottom;
@@ -583,6 +97,19 @@ table.rating_table td {
 	padding:7px;
 }
 
+/* TOTAL horizontal bar chart */
+.sum div {
+	height:17px;
+	letter-spacing:1px;
+}
+
+/* TOTAL horizontal bar label */
+.sum span {
+	letter-spacing:1px;
+	padding-left:3px;
+}
+
+/* TOTAL horizontal bar average score for each metric */
 .sum td.tdresult {
 	border:1px;
 	border-style:solid;
@@ -595,22 +122,19 @@ table.rating_table td {
 	width:35px;
 }
 
-
-
-
-.sum span {
-	letter-spacing:1px;
-	padding-left:3px;
+/* TOTAL vertical histogram table container */
+.result {
+	margin-left:20px;
 }
 
-
-.result table {
+/* TOTAL vertical histogram table container table */
+.result > table {
 	border:1px;
 	border-style:solid;
 	border-color:#f3f3f3;
-
 }
 
+/* TOTAL vertical histogram column container cell */
 .result td.tdrating {
 	border:1px;
 	border-style:solid;
@@ -619,6 +143,7 @@ table.rating_table td {
 	vertical-align:bottom;
 }
 
+/* TOTAL vertical histogram column div */
 .result div {
 	margin:7px;
 	font-family:Arial, Helvetica, sans-serif;
@@ -628,10 +153,7 @@ table.rating_table td {
 	vertical-align:bottom;
 }
 
-.result {
-	margin-left:3px;
-}
-
+/* TOTAL vertical histogram X-axis labels */
 .result td.tdresult {
 	border:1px;
 	border-style:solid;
@@ -643,19 +165,86 @@ table.rating_table td {
 	text-align:center;
 	letter-spacing:1px;
 }
-//remove annoying RSS feed link.
-li.f2jnag {
-	display:none;
+
+/** INDIVIDUAL VOTES */
+/* wrapper around stored votes */
+.rating {
+	border:1px;
+	border-style:solid;
+	border-color:#f5f5f5;
+	width:100%;
 }
 
-/* Fixes for rating bars - adding until this is fixed in the extension itself */
-.sum    tr:nth-child(1) .tdrating div,
-.rating tr:nth-child(1) .tdrating div { background-image:url(http://gwpvx.gamepedia.com/extensions/PvX/Rate/r1.jpg) !important; }
-.sum    tr:nth-child(2) .tdrating div,
-.rating tr:nth-child(2) .tdrating div { background-image:url(http://gwpvx.gamepedia.com/extensions/PvX/Rate/r2.jpg) !important; }
-.sum    tr:nth-child(3) .tdrating div,
-.rating tr:nth-child(3) .tdrating div { background-image:url(http://gwpvx.gamepedia.com/extensions/PvX/Rate/r3.jpg) !important; }
-.sum    tr:nth-child(4) .tdrating div,
-.rating tr:nth-child(4) .tdrating div { background-image:url(http://gwpvx.gamepedia.com/extensions/PvX/Rate/r4.jpg) !important; }
-td:nth-child(2) .result .tdrating div { background-image:url(http://gwpvx.gamepedia.com/extensions/PvX/Rate/v2.jpg) !important; }
-td:nth-child(4) .result .tdrating div { background-image:url(http://gwpvx.gamepedia.com/extensions/PvX/Rate/v3.jpg) !important; }/* MediaWiki:Hydra.css */
+/* table directly containing the horizontal bar charts */
+.rating > table {
+	border:none;
+	width:100%;
+}
+
+/* rating horizontal bar charts */
+.rating td.tdrating {
+	width:170px;
+	background-position:bottom;
+	background-repeat:repeat-x;
+	border:1px;
+	border-style:solid;
+	border-color:#f5f5f5;
+	font-size:9px;
+	font-family:Arial, Helvetica, sans-serif;
+	vertical-align:middle;
+	color:#666666;
+	padding:7px;
+}
+
+/* text labels for the bar charts */
+.rating span {
+	letter-spacing:1px;
+	padding-left:3px;
+}
+
+/* the score for each INDIVIDUAL metric */
+.rating td.tdresult {
+	border:1px;
+	border-style:solid;
+	border-color:#f5f5f5;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	vertical-align:middle;
+	text-align:center;
+	width:35px;
+}
+
+/* the right-hand side of the table, containing another table */
+.rating table.tablecomment {
+	width:100%;
+}
+
+.rating td.tdcomment {
+	border:1px;
+	border-style:solid;
+	border-color:#f5f5f5;
+	vertical-align:top;
+	padding-left:5px;
+	overflow-y:auto;
+}
+
+/* user links */
+.rating td.tduser {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+}
+
+/* last edit date */
+.rating td.tdedit {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:right;
+}
+
+/* edit and delete links */
+.aedit {
+	font-size:x-small;
+	float:right;
+}

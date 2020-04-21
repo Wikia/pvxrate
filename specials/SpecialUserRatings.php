@@ -24,7 +24,7 @@ class SpecialUserRatings extends SpecialPage {
 
 		parent::__construct(
 			'UserRatings', // name
-			null, //'pvxrate', // required user right
+			null, // required user right
 			true // display on Special:Specialpages
 		);
 
@@ -43,12 +43,14 @@ class SpecialUserRatings extends SpecialPage {
 	 * @return	void	[Outputs to screen]
 	 */
 	 public function execute($par = null) {
- 		global $wgLang;
+		global $wgLang;
 
 		$this->output->addModules('ext.pvxrate');
  		$this->output->setPageTitle( wfMessage('userratings') );
 
- 		$got_ratings = $this->GetRatings();
+		$targetUser = $par; // Note: Might have defaulted to "null" if no parameters specified in URL
+
+ 		$got_ratings = $this->GetRatings($targetUser);
  		if ($got_ratings) {
  			$timeprevious = '';
  			foreach ($got_ratings as $array) {
@@ -72,7 +74,7 @@ class SpecialUserRatings extends SpecialPage {
  						$user_link = '';
  					}
 
- 					$page_link = '[[Build:' . $array['page_title'] . '|' . $array['page_title'] . ']] - [[Build_talk:' . $array['page_title'] . '|Talk]] - [http://www.gwpvx.com/index.php?title=Build:' . str_replace(" ", "_", $array['page_title']) . '&action=rate Rate]';
+ 					$page_link = '[[Build:' . $array['page_title'] . '|' . $array['page_title'] . ']] - [[Build_talk:' . $array['page_title'] . '|Talk]] - [{{FULLURL:Build:' . str_replace(" ", "_", $array['page_title']) . '|action=rate}} Rate]';
 
  					if ($array['admin_id']) {
  						$admin_name = User::newFromId($array['admin_id'])->getName();
@@ -125,7 +127,7 @@ class SpecialUserRatings extends SpecialPage {
 	 * Get ratings from database
 	 * @return array | false
 	 */
- 	public function GetRatings() {
+ 	public function GetRatings($targetUser) {
 		global $wgPvXRateBuildNamespace;
 
 		$buildNamespace = defined($wgPvXRateBuildNamespace);
@@ -135,17 +137,33 @@ class SpecialUserRatings extends SpecialPage {
 			$buildNamespace = constant($wgPvXRateBuildNamespace);
 		}
 
+		// Default to showing the logged in user's contributions
+		$targetUserID = $this->wgUser->getID();
+
+		// Adapted from Special:Contributions - may require further testing
+		// If a username has been given as a parameter (e.g. [[Special:UserRatings/username1]]), use "username1" and get its id instead.
+		if ( strlen( $targetUser ) !== 0 ) {
+			$targetUserSafe = Title::makeTitleSafe( NS_USER, $targetUser );
+			if ( $targetUserSafe ) {
+				$userObj = User::newFromName( $targetUserSafe->getText(), false );
+				if ( $userObj ) {
+					$targetUserID = $userObj->getId();
+				}
+			}
+		}
+
+		// Get ratings from the database
 		$res = $this->DB->select(
 			['rating', 'user', 'page'],
 			['user_name', 'rating.user_id', 'page_title', 'comment', 'rollback', 'admin_id', 'reason', 'rating1', 'rating2', 'rating3', 'timestamp'],
 			[
-				'rating.user_id' => $this->wgUser->getID(),
+				'rating.user_id' => $targetUserID,
 				'page.page_namespace' => $buildNamespace
 			],
 			__METHOD__,
 			[
-					"ORDER BY"=> "rating.timestamp DESC",
-					"LIMIT" => '200'
+				"ORDER BY"=> "rating.timestamp DESC",
+				"LIMIT" => '200'
 			],
 			[
 				'user' => array('LEFT JOIN', array('rating.user_id=user.user_id')),

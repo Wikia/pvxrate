@@ -1,10 +1,12 @@
 {
 	"name": "PvX Rate",
+	"version": "2.0.0",
 	"author": [
 		"gcardinal",
 		"Hhhippo",
 		"Alexia E. Smith",
-		"Cameron Chunn"
+		"Cameron Chunn",
+		"PvX Wiki 2010-2020 Contributors"
 	],
 	"descriptionmsg": "pvxrate_description",
 	"license-name": "GPL-2.0-or-later",
@@ -15,6 +17,9 @@
 	"GroupPermissions": {
 		"user": {
 			"ratebuild": true
+		},
+		"sysop": {
+			"vote_rollback": true
 		}
 	},
 	"SpecialPages": {
@@ -45,16 +50,34 @@
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "/",
-		"remoteExtPath": "PvXRote"
+		"remoteExtPath": "PvXRate"
 	},
 	"config": {
 		"PvXRateBuildNamespace": "NS_BUILD",
 		"PvXRateBuildTalkNamespace": "NS_BUILD_TALK",
 		"PvXRateEditsRequired": 2
 	},
+	"namespaces": [
+		{
+			"id": 100,
+			"constant": "NS_BUILD",
+			"name": "Build"
+		},
+		{
+			"id": 101,
+			"constant": "NS_BUILD_TALK",
+			"name": "Build_talk"
+		}
+	],
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": [
 			"PvXRateHooks::onLoadExtensionSchemaUpdates"
+		],
+		"PersonalUrls": [
+			"PvXRateHooks::addURLToUserLinks"
+		],
+		"SkinTemplateNavigation": [
+			"PvXRateHooks::onSkinTemplateNavigation"
 		]
 	},
 	"manifest_version": 1
