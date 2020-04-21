@@ -2,13 +2,23 @@
 	"@metadata": {
 		"authors": ["Cameron Chunn"]
 	},
+
 	"pvxrate": "PvX Rate",
-	"rate": "",
-	"action-pvxrate": "perform PvX Rate actions",
-	"action-ratebuild": "rate builds",
+	"pvxrate_description": "Adds tab to Rate articles, list user ratings, and list recent ratings",
+	
 	"specialpages-group-pvx": "PvX",
-	"no-ratings-found": "No ratings found for this user.",
+
 	"recentratings": "Recent Ratings",
 	"userratings": "User Ratings",
-	"pvxrate_description": "Adds tab to Rate articles, List user ratings, and list recent ratings."
+	"myratings": "Ratings",
+	"no-ratings-found": "No ratings found for this user.",
+
+	"pvxrate-tab-text": "Rate",
+	"tooltip-ca-pvxrate": "Rate this build",
+	"rate": "",
+
+	"action-ratebuild": "rate builds",
+	"action-vote_rollback": "remove and restore votes by other users",
+	"right-ratebuild": "Rate builds in the Build namespace",
+	"right-vote_rollback": "Remove and restore votes by other users"
 }
