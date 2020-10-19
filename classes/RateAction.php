@@ -830,6 +830,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 			'user_id' => $input['user_id'],
 			'comment' => $input['comment'],
 			'rollback' => $input['rollback'],
+			'admin_id' => 0,
 			'reason' => $input['reason'],
 			'rating1' => $input['rating'][0],
 			'rating2' => $input['rating'][1],
