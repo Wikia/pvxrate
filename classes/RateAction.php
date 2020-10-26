@@ -84,16 +84,16 @@ Pages in this namespace cannot be voted upon.
 
 			if (($posted_action == 'edit') && ($this->rateCheckRights($article, $posted_build))) {
 				$wgOut->addHtml('<h2> Rate this build </h2>');
-				$wgOut->addHtml($this->rateForm($this->rateRead(false, false, $posted_build)));
+				$wgOut->addHtml($this->rateForm($this->rateRead(null, null, $posted_build)));
 				$show_own = false;
 			}
 
 			if (($posted_action == 'rollback') && ($is_admin) && ($posted_build)) {
-				$wgOut->addHtml($this->rateRollback($this->rateRead(false, false, $posted_build)));
+				$wgOut->addHtml($this->rateRollback($this->rateRead(null, null, $posted_build)));
 			}
 
 			if (($posted_action == 'restore') && ($is_admin) && ($posted_build)) {
-				$wgOut->addHtml($this->rateRestore($this->rateRead(false, false, $posted_build)));
+				$wgOut->addHtml($this->rateRestore($this->rateRead(null, null, $posted_build)));
 			}
 
 			if (($posted_action == 'delete') && ($this->rateCheckRights($article, $posted_build))) {
@@ -123,7 +123,7 @@ Pages in this namespace cannot be voted upon.
 						$rate_input['rollback'] = 0;
 						$rate_input['admin_id'] = 0;
 						$rate_input['reason'] = '';
-						if (!$this->rateRead($article->getID(), $this->getUser()->getID(), false)) {
+						if (!$this->rateRead($article->getID(), $this->getUser()->getID(), null)) {
 							$this->rateSave($rate_input);
 						}
 					}
@@ -344,7 +344,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 		$out_all = '';
 
 		// Get all the ratings for this build
-		$current = $this->rateRead($article->getID(), false, false);
+		$current = $this->rateRead($article->getID(), null, null);
 
 		// Check if there are any current ratings in the database.
 		if ($current) {
@@ -597,9 +597,9 @@ Whilst your account meets all of the basic requirements for the rating permissio
 	public function rateCheckRights($article, $build_id) {
 		global $wgUser;
 
-		$rating_posted = $this->rateRead(false, false, $build_id);
+		$rating_posted = $this->rateRead(null, null, $build_id);
 		if (($rating_posted[0]['page_id']) && ($rating_posted[0]['user_id'])) {
-			$rating_control = $this->rateRead($rating_posted[0]['page_id'], $rating_posted[0]['user_id'], false);
+			$rating_control = $this->rateRead($rating_posted[0]['page_id'], $rating_posted[0]['user_id'], null);
 		}
 
 		if (($rating_control[0]['page_id'] == $article->getID()) && ($rating_control[0]['user_id'] == $this->getUser()->getID())) {
@@ -825,41 +825,55 @@ Whilst your account meets all of the basic requirements for the rating permissio
 	public function rateSave(array $input) {
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->startAtomic(__METHOD__);
-		$dbw->insert('rating', array(
-			'page_id' => $input['page_id'],
-			'user_id' => $input['user_id'],
-			'comment' => $input['comment'],
-			'rollback' => $input['rollback'],
-			'admin_id' => 0,
-			'reason' => $input['reason'],
-			'rating1' => $input['rating'][0],
-			'rating2' => $input['rating'][1],
-			'rating3' => $input['rating'][2]
-		), __METHOD__);
+		$dbw->insert(
+			'rating',
+			[
+				'page_id' => $input['page_id'],
+				'user_id' => $input['user_id'],
+				'comment' => $input['comment'],
+				'rollback' => $input['rollback'],
+				'admin_id' => 0,
+				'reason' => $input['reason'],
+				'rating1' => $input['rating'][0],
+				'rating2' => $input['rating'][1],
+				'rating3' => $input['rating'][2],
+				'ip_address' => ''
+			],
+			__METHOD__
+		);
 		$dbw->endAtomic(__METHOD__);
 		return true;
 	}
 
 	/**
 	 * Read ratings from db
-	 * @param  int $page_id
-	 * @param  int $user_id
-	 * @param  int $rate_id
+	 * @param  int|null $page_id
+	 * @param  int|null $user_id
+	 * @param  int|null $rate_id
 	 * @return array|false
 	 */
-	public function rateRead($page_id, $user_id, $rate_id) {
-
+	public function rateRead(?int $page_id, ?int $user_id, ?int $rate_id) {
 		$dbr = wfGetDB(DB_SLAVE);
 
-		if ((is_numeric($rate_id)) && ($rate_id > 1)) {
-			$res = $dbr->query("SELECT * FROM `rating` WHERE `rate_id` =" . $rate_id . " LIMIT 0, 1");
+		$where = [];
+		$limit = 1000;
+		if ($rate_id > 1) {
+			$where['rate_id'] = $rate_id;
+			$limit = 1;
 		} else {
+			$where['page_id'] = $page_id;
 			if ($user_id) {
-				$res = $dbr->query("SELECT * FROM `rating` WHERE `page_id` =" . $page_id . " AND `user_id` = " . $user_id . " LIMIT 0, 1");
-			} else {
-				$res = $dbr->query("SELECT * FROM `rating` WHERE `page_id` =" . $page_id . " LIMIT 0, 1000");
+				$where['user_id'] = $user_id;
+				$limit = 1;
 			}
 		}
+		$res = $db->select(
+			['rating'],
+			['*'],
+			$where,
+			__METHOD__,
+			['LIMIT' => $limit]
+		);
 
 		$count = $dbr->numRows($res);
 		if ($count > 0) {
