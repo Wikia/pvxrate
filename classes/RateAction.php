@@ -867,7 +867,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 				$limit = 1;
 			}
 		}
-		$res = $db->select(
+		$res = $dbr->select(
 			['rating'],
 			['*'],
 			$where,
