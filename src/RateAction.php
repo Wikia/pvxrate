@@ -35,7 +35,7 @@ class RateAction extends FormlessAction {
 		$this->editsReq = $config->get( 'PvXRateEditsRequired' );
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->parser = $services->getParser();
-		$this->service = new RateService();
+		$this->service = $services->getService( RateService::class );
 	}
 
 	/**

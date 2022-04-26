@@ -44,13 +44,6 @@ class SpecialUserRatings extends SpecialPage {
 		$this->userLookup = $services->getUserIdentityLookup();
 	}
 
-	/**
-	 * Main Executor
-	 *
-	 * @access    public
-	 * @param string    Sub page passed in the URL.
-	 * @return    void    [Outputs to screen]
-	 */
 	public function execute( $subPage = null ) {
 		$this->getOutput()->addModules( 'ext.pvxrate' );
 		$this->getOutput()->setPageTitle( wfMessage( 'userratings' ) );
@@ -59,11 +52,6 @@ class SpecialUserRatings extends SpecialPage {
 		$this->renderer->render( $ratings, $this->getOutput(), $this->getUser(), $this->getLanguage() );
 	}
 
-	/**
-	 * @param $par
-	 * @return int
-	 * @throws BadRequestException
-	 */
 	private function getTargetUserId( ?string $par ): int {
 		// Default to showing the logged in user's contributions
 		if ( !empty( $par ) ) {
@@ -81,27 +69,15 @@ class SpecialUserRatings extends SpecialPage {
 		}
 	}
 
-	/**
-	 * Hides special page from SpecialPages special page.
-	 *
-	 * @access    public
-	 * @return    boolean    False
-	 */
 	public function isListed(): bool {
 		return true;
 	}
 
-	/**
-	 * Lets others determine that this special page is restricted.
-	 *
-	 * @access    public
-	 * @return    boolean    True
-	 */
 	public function isRestricted(): bool {
 		return false;
 	}
 
 	protected function getGroupName(): string {
-		return 'pvx'; //Change to display in a different category on Special:SpecialPages.
+		return 'pvx';
 	}
 }

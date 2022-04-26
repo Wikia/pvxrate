@@ -29,13 +29,6 @@ class SpecialRecentRatings extends SpecialPage {
 		);
 	}
 
-	/**
-	 * Main Executor
-	 *
-	 * @access    public
-	 * @param string    Sub page passed in the URL.
-	 * @return    void    [Outputs to screen]
-	 */
 	public function execute( $par = null ) {
 		$this->getOutput()->addModules( 'ext.pvxrate' );
 		$this->getOutput()->setPageTitle( wfMessage( 'recentratings' ) );
