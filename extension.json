@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.29.0"
+		"MediaWiki": ">= 1.37.0"
 	},
 	"GroupPermissions": {
 		"user": {
@@ -23,22 +23,20 @@
 		}
 	},
 	"SpecialPages": {
-		"UserRatings": "SpecialUserRatings",
-		"RecentRatings": "SpecialRecentRatings"
+		"UserRatings": "Fandom\\PvXRate\\SpecialUserRatings",
+		"RecentRatings": "Fandom\\PvXRate\\SpecialRecentRatings"
 	},
 	"Actions": {
-		"rate": "RateAction"
+		"rate": "Fandom\\PvXRate\\RateAction"
 	},
 	"MessagesDirs": {
 		"PvXRate": [
 			"i18n"
 		]
 	},
-	"AutoloadClasses": {
-		"RateAction": "classes/RateAction.php",
-		"PvXRateHooks": "PvXRate.hooks.php",
-		"SpecialUserRatings": "specials/SpecialUserRatings.php",
-		"SpecialRecentRatings": "specials/SpecialRecentRatings.php"
+	"ServiceWiringFiles": ["ServiceWiring.php"],
+	"AutoloadNamespaces": {
+		"Fandom\\PvXRate\\": "src"
 	},
 	"ResourceModules": {
 		"ext.pvxrate": {
@@ -71,13 +69,13 @@
 	],
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": [
-			"PvXRateHooks::onLoadExtensionSchemaUpdates"
+			"Fandom\\PvXRate\\PvXRateHooks::onLoadExtensionSchemaUpdates"
 		],
 		"PersonalUrls": [
-			"PvXRateHooks::addURLToUserLinks"
+			"Fandom\\PvXRate\\PvXRateHooks::addURLToUserLinks"
 		],
-		"SkinTemplateNavigation": [
-			"PvXRateHooks::onSkinTemplateNavigation"
+		"SkinTemplateNavigation::Universal": [
+			"Fandom\\PvXRate\\PvXRateHooks::onSkinTemplateNavigation"
 		]
 	},
 	"manifest_version": 1
