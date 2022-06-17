@@ -5,7 +5,6 @@ declare( strict_types=1 );
 namespace Fandom\PvXRate;
 
 use DatabaseUpdater;
-use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use SkinTemplate;
 use SpecialPage;
@@ -119,7 +118,7 @@ class PvXRateHooks {
 		// If it's a redirect, exit. We don't follow redirects since it might confuse the user or
 		// lead to an endless loop (like if the talk page redirects to the user page or a subpage).
 		// This means that the Rate tab will not appear on build pages if the build page is a redirect.
-		if ( $buildTitle->isRedirect() ) {
+		if ( $buildTitle === null || $buildTitle->isRedirect() ) {
 			return null;
 		}
 
@@ -133,21 +132,19 @@ class PvXRateHooks {
 
 	/**
 	 * @param Title $title
-	 * @return LinkTarget|Title|null
+	 * @return Title|null
 	 */
 	private static function getBuildTitle( Title $title ) {
 		// If we're on a subpage, get the root page title
 		$baseTitle = $title->getRootTitle();
 
-		// Get the associated build page
-		if ( $title->getNamespace() == NS_BUILD ) {
-			// We're already on the rate page
-			return $baseTitle;
-		} elseif ( $title->getNamespace() == NS_BUILD_TALK ) {
+		if ( $title->getNamespace() == NS_BUILD_TALK ) {
+			$nsInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
+
 			// We're on the build talk page, so retrieve the rate page instead
-			return MediaWikiServices::getInstance()->getNamespaceInfo()->getSubjectPage( $baseTitle );
-		} else {
-			return $baseTitle;
+			return Title::castFromLinkTarget( $nsInfo->getSubjectPage( $baseTitle ) );
 		}
+
+		return $baseTitle;
 	}
 }
