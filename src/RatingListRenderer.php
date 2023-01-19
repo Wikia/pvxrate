@@ -76,21 +76,21 @@ class RatingListRenderer {
 
 				$total = $rating['rating'][0] * .8 + $rating['rating'][1] * .2 + $rating['rating'][2] * .0;
 				if ( $total < 3.75 ) {
-					$rating = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'trash\'\')';
+					$rating['text'] = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'trash\'\')';
 				} elseif ( $total < 4.75 ) {
-					$rating = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'good\'\')';
+					$rating['text']  = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'good\'\')';
 				} elseif ( $total >= 4.75 ) {
-					$rating = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'great\'\')';
+					$rating['text']  = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'great\'\')';
 				}
 
 				if ( $rating['rollback'] ) {
-					$out .= '\'\'\'' . $admin_link . '\'\'\'' . ' removed ' . strtolower( $rating ) . ' posted by: ' .
+					$out .= '\'\'\'' . $admin_link . '\'\'\'' . ' removed ' . strtolower( $rating['text'] ) . ' posted by: ' .
 							$user_link;
 				} elseif ( !$rating['rollback'] && $rating['reason'] ) {
-					$out .= '\'\'\'' . $admin_link . '\'\'\'' . ' restored ' . strtolower( $rating ) . ' posted by: ' .
+					$out .= '\'\'\'' . $admin_link . '\'\'\'' . ' restored ' . strtolower( $rating['text'] ) . ' posted by: ' .
 							$user_link;
 				} else {
-					$out .= $rating;
+					$out .= $rating['text'] ;
 					$out .= ' . . ';
 					$out .= ' E:' . $rating['rating'][0];
 					$out .= ' U:' . $rating['rating'][1];
