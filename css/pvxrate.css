@@ -3,248 +3,226 @@
 /** NEW VOTES and EDIT VOTES*/
 /* wrapper for the Edit vote/New vote */
 .ratingform {
-	border:1px;
-	border-style:dashed;
-	border-color:#aaaaaa;
-	padding:14px;
+	border:  1px dashed #aaaaaa;
+	padding: 14px;
 }
 
 /* table for the Edit vote/New vote */
 table.rating_table {
-	border:0px;
-	border-style:solid;
+	border:  0 solid;
 }
 table.rating_table td {
-	padding:6px;
+	padding: 6px;
 }
 
 /* below the rating categories on the vote - Edit vote/New vote */
 span.rating_cat {
-	font-weight:bold;
-	font-family:Verdana, Arial, Helvetica, sans-serif;
-	vertical-align:top;
-	cursor:pointer;
-	color:#372207;
-	border-bottom:1px dashed #786143;
+	font-weight: bold;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	vertical-align: top;
+	cursor: pointer;
+	color: #372207;
+	border-bottom: 1px dashed #786143;
 }
 
 /* below the circular the buttons - Edit vote/New vote */
 div.rating_input {
-	padding:6px;
-	border-bottom:1px solid #e5e5e5;
-	display:inline;
+	padding: 6px;
+	border-bottom: 1px solid #e5e5e5;
+	display: inline;
 }
 
 /* text reasoning for the vote */
 .rating_text {
-	width:312px;
-	border-color:#e5e5e5;
-	border-style:solid;
-	border-width:1px;
+	width: 312px;
+	border-color: #e5e5e5;
+	border-style: solid;
+	border-width: 1px;
 }
 
 /* number labels for the circular buttons - Edit vote/New vote */
 div.rating_input span {
-	padding:6px;
-	font-size:14px;
-	font-weight:bold;
-	display:inline;
+	padding: 6px;
+	font-size: 14px;
+	font-weight: bold;
+	display: inline;
 }
 
 /* save button - edit vote/new vote */
 .ratingform input.button {
-	margin-left:120px;
+	margin-left: 120px;
 }
 
 /* RATING BAR AND HISTOGRAM COLORS - ALL VOTES */
 /* Vertical bars */
-.v0, .v1, .v2, .v3, .v4 { width:17px; }
-.v0 { background-image:url(../images/v0.jpg); } /* whitesmoke */
-.v1 { background-image:url(../images/v1.jpg); } /* yellow */
-.v2 { background-image:url(../images/v2.jpg); } /* peach */
-.v3 { background-image:url(../images/v3.jpg); } /* blue */
-.v4 { background-image:url(../images/v4.jpg); } /* green */
+.v0, .v1, .v2, .v3, .v4 { width: 17px; }
+.v0 { background-image: url(../images/v0.jpg); } /* whitesmoke */
+.v1 { background-image: url(../images/v1.jpg); } /* yellow */
+.v2 { background-image: url(../images/v2.jpg); } /* peach */
+.v3 { background-image: url(../images/v3.jpg); } /* blue */
+.v4 { background-image: url(../images/v4.jpg); } /* green */
 
 /* Horizontal bars */
-.r0, .r1, .r2, .r3, .r4 { height:17px; }
-.r0 { background-image:url(../images/r0.jpg); } /* whitesmoke */
-.r1 { background-image:url(../images/r1.jpg); } /* yellow */
-.r2 { background-image:url(../images/r2.jpg); } /* peach */
-.r3 { background-image:url(../images/r3.jpg); } /* blue */
-.r4 { background-image:url(../images/r4.jpg); } /* green */
+.r0, .r1, .r2, .r3, .r4 { height: 17px; }
+.r0 { background-image: url(../images/r0.jpg); } /* whitesmoke */
+.r1 { background-image: url(../images/r1.jpg); } /* yellow */
+.r2 { background-image: url(../images/r2.jpg); } /* peach */
+.r3 { background-image: url(../images/r3.jpg); } /* blue */
+.r4 { background-image: url(../images/r4.jpg); } /* green */
 
 
 /** OVERALL SCORE SUMMARY */
 /* TOTAL horizontal ratings table at the top-left of the page */
 .sum > table {
-	border:1px;
-	border-style:solid;
-	border-color:#f3f3f3;
+	border: 1px;
+	border-style: solid;
+	border-color: #f3f3f3;
 }
 
 /* TOTAL horizontal bar chart container cell */
 .sum td.tdrating {
-	width:170px;
-	background-position:bottom;
-	background-repeat:repeat-x;
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-size:9px;
-	font-family:Arial, Helvetica, sans-serif;
-	vertical-align:bottom;
-	color:#666666;
-	padding:7px;
+	width: 170px;
+	background-position: bottom;
+	background-repeat: repeat-x;
+	border:  1px solid #f5f5f5;
+	font-size: 9px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: bottom;
+	color: #666666;
+	padding: 7px;
 }
 
 /* TOTAL horizontal bar chart */
 .sum div {
-	height:17px;
-	letter-spacing:1px;
+	height: 17px;
+	letter-spacing: 1px;
 }
 
 /* TOTAL horizontal bar label */
 .sum span {
-	letter-spacing:1px;
-	padding-left:3px;
+	letter-spacing: 1px;
+	padding-left: 3px;
 }
 
 /* TOTAL horizontal bar average score for each metric */
 .sum td.tdresult {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:12px;
-	font-weight:bold;
-	vertical-align:middle;
-	text-align:center;
-	width:35px;
+	border:  1px solid #f5f5f5;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	vertical-align: middle;
+	text-align: center;
+	width: 35px;
 }
 
 /* TOTAL vertical histogram table container */
 .result {
-	margin-left:20px;
+	margin-left: 20px;
 }
 
 /* TOTAL vertical histogram table container table */
 .result > table {
-	border:1px;
-	border-style:solid;
-	border-color:#f3f3f3;
+	border:  1px solid #f3f3f3;
 }
 
 /* TOTAL vertical histogram column container cell */
 .result td.tdrating {
-	border:1px;
-	border-style:solid;
-	border-color:#f3f3f3;
-	height:93px;
-	vertical-align:bottom;
+	border: 1px solid #f3f3f3;
+	height: 93px;
+	vertical-align: bottom;
 }
 
 /* TOTAL vertical histogram column div */
 .result div {
-	margin:7px;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:10px;
-	vertical-align:middle;
-	text-align:center;
-	vertical-align:bottom;
+	margin: 7px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-align: center;
+	vertical-align: bottom;
 }
 
 /* TOTAL vertical histogram X-axis labels */
 .result td.tdresult {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:12px;
-	font-weight:bold;
-	vertical-align:middle;
-	text-align:center;
-	letter-spacing:1px;
+	border: 1px solid #f5f5f5;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	vertical-align: middle;
+	text-align: center;
+	letter-spacing: 1px;
 }
 
 /** INDIVIDUAL VOTES */
 /* wrapper around stored votes */
 .rating {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	width:100%;
+	border:1px solid #f5f5f5;
+	width: 100%;
 }
 
 /* table directly containing the horizontal bar charts */
 .rating > table {
-	border:none;
-	width:100%;
+	border: none;
+	width: 100%;
 }
 
 /* rating horizontal bar charts */
 .rating td.tdrating {
-	width:170px;
-	background-position:bottom;
-	background-repeat:repeat-x;
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-size:9px;
-	font-family:Arial, Helvetica, sans-serif;
-	vertical-align:middle;
-	color:#666666;
-	padding:7px;
+	width: 170px;
+	background-position: bottom;
+	background-repeat: repeat-x;
+	border: 1px solid #f5f5f5;
+	font-size: 9px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+	color: #666666;
+	padding: 7px;
 }
 
 /* text labels for the bar charts */
 .rating span {
-	letter-spacing:1px;
-	padding-left:3px;
+	letter-spacing: 1px;
+	padding-left: 3px;
 }
 
 /* the score for each INDIVIDUAL metric */
 .rating td.tdresult {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:12px;
-	font-weight:bold;
-	vertical-align:middle;
-	text-align:center;
-	width:35px;
+	border: 1px solid #f5f5f5;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	vertical-align: middle;
+	text-align: center;
+	width: 35px;
 }
 
 /* the right-hand side of the table, containing another table */
 .rating table.tablecomment {
-	width:100%;
+	width: 100%;
 }
 
 .rating td.tdcomment {
-	border:1px;
-	border-style:solid;
-	border-color:#f5f5f5;
-	vertical-align:top;
-	padding-left:5px;
-	overflow-y:auto;
+	border: 1px solid #f5f5f5;
+	vertical-align: top;
+	padding-left: 5px;
+	overflow-y: auto;
 }
 
 /* user links */
 .rating td.tduser {
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:14px;
-	font-weight:bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 /* last edit date */
 .rating td.tdedit {
-	font-size:10px;
-	font-family:Verdana, Arial, Helvetica, sans-serif;
-	text-align:right;
+	font-size: 10px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align: right;
 }
 
 /* edit and delete links */
 .aedit {
-	font-size:x-small;
-	float:right;
+	font-size: x-small;
+	float: right;
 }

@@ -15,11 +15,7 @@ class RateService {
 		3 => 0.0,
 	];
 
-	/** @var ILoadBalancer */
-	private $lb;
-
-	public function __construct( ILoadBalancer $lb ) {
-		$this->lb = $lb;
+	public function __construct( private ILoadBalancer $lb ) {
 	}
 
 	/**
@@ -64,17 +60,22 @@ class RateService {
 		}
 
 		$r->histogram = [];
-		for ( $y = 1; $y <= 3; $y ++ ) { # y=1..3 counts criteria
-			for ( $i = 0; $i <= 5; $i ++ ) { # i=0..5 counts rating
-				$r->histogram[$y][$i] = (int)$dbr->fetchObject(
-					$dbr->query(
-						"SELECT count(rating" . $y . ") AS count FROM rating
-									 WHERE rating" . $y . " = " . $i . " AND rollback != 1 AND page_id = "
-						. $pageId
-					)
-				)->count;
+		for ( $y = 1; $y <= 3; $y++ ) { # y=1..3 counts criteria
+			for ( $i = 0; $i <= 5; $i++ ) { # i=0..5 counts rating
+				$r->histogram[$y][$i] =
+					(int)$dbr->newSelectQueryBuilder()
+					->select( "COUNT(rating$y) as count" )
+					->from( "rating" )
+					->where( [
+						"rating$y" => $i,
+						"rollback != 1",
+						"page_id" => $pageId
+					] )
+					->caller( __METHOD__ )
+					->fetchField();
 			}
 		}
+
 		return $r;
 	}
 
@@ -138,7 +139,7 @@ class RateService {
 		$i = 0;
 		$rate_out = [];
 		foreach ( $res as $row ) {
-			$rate_out[$i ++] = $this->map( $row );
+			$rate_out[$i++] = $this->map( $row );
 		}
 		return $rate_out;
 	}
@@ -171,7 +172,7 @@ class RateService {
 		);
 	}
 
-	public function rollbackOrRestore( int $rateId, int $adminId, bool $rollback, string $reason ) {
+	public function rollbackOrRestore( int $rateId, int $adminId, bool $rollback, string $reason ): void {
 		$this->lb->getConnection( DB_PRIMARY )->update(
 			'rating',
 			[
@@ -243,7 +244,7 @@ class RateService {
 		);
 
 		$ratings = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			$ratings[] = [
 				'user_name' => $row->user_name,
 				'comment' => $row->comment,

@@ -4,8 +4,10 @@ declare( strict_types=1 );
 
 namespace Fandom\PvXRate;
 
-use DatabaseUpdater;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
+use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
+use MWException;
+use NamespaceInfo;
 use SkinTemplate;
 use SpecialPage;
 use Title;
@@ -16,43 +18,68 @@ use User;
  * PvX Rate
  * Adds tab to Rate articles, List user ratings, and list recent ratings.
  *
- * @author        Cameron Chunn
- * @copyright    (c) 2015 Curse Inc.
- * @license        GNU General Public License v2.0 or later
- * @package        PvXRate
- * @link        https://gitlab.com/hydrawiki
+ * @author		Cameron Chunn
+ * @copyright	(c) 2015 Curse Inc.
+ * @license		GPL-2.0-or-later
+ * @package		PvXRate
+ * @link		https://gitlab.com/hydrawiki
  *
- **/
-class PvXRateHooks {
-	/**
-	 * @param DatabaseUpdater $updater
-	 * @return true;
-	 */
-	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
+ */
+class PvXRateHooks implements
+	LoadExtensionSchemaUpdatesHook,
+	SkinTemplateNavigation__UniversalHook
+{
+
+	public function __construct( private NamespaceInfo $namespaceInfo ) {
+	}
+
+	public static function onRegistration(): void {
+		require_once __DIR__ . '/defines.php';
+	}
+
+	public function onLoadExtensionSchemaUpdates( $updater ) {
 		$updater->addExtensionUpdate( [
 			'addTable',
 			'rating',
 			__DIR__ . '/install/sql/table_rating.sql',
 			true,
 		] );
-		return true;
+	}
+
+	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
+		// The links array has four possible keys
+		//   (1) "namespace" => like Special, Page, Talk
+		//   (2) "views" => like Read, Edit, History
+		//   (3) "actions" => like Move, Delete, Protect (sometimes pushed into dropdown menus)
+		//   (4) "variants" => like French, German, Spanish
+		// and we're choosing views because Rating is like Editing
+		// Get the correct target build page (valid if in the build or build_talk namespaces)
+		$target = $this->getBuildPage( $sktemplate->getTitle(), $sktemplate->getUser() );
+		if ( $target !== null ) {
+			$links['views']['pvxrate'] = [
+				'text' => $sktemplate->msg( 'pvxrate-tab-text' )->text(),
+				'href' => $sktemplate->getTitle()->getLocalURL( "action=rate" ),
+			];
+		}
+		$this->addURLToUserLinks( $links['user-menu'], $sktemplate );
 	}
 
 	/**
-	 * For logged in users, add a link to the special 'UserRatings' page
+	 * For logged-in users, add a link to the special 'UserRatings' page
 	 * among the user's "personal URLs" at the top, if they have
 	 * the 'adminlinks' permission.
 	 *
 	 * Modified from https://www.mediawiki.org/wiki/Extension:Admin_Links
+	 * @throws MWException
 	 */
-	public static function addURLToUserLinks( array &$personal_urls, Title &$title, SkinTemplate $skinTemplate ) {
+	private function addURLToUserLinks( array &$personal_urls, SkinTemplate $skinTemplate ) {
 		if ( $skinTemplate->getUser()->isRegistered() ) {
 			$ur = SpecialPage::getTitleFor( 'UserRatings' );
 			$href = $ur->getLocalURL();
 			$userratings_links_vals = [
 				'text' => $skinTemplate->msg( 'myratings' )->text(),
 				'href' => $href,
-				'active' => ( $href == $title->getLocalURL() ),
+				'active' => ( $href == $skinTemplate->getTitle()->getLocalURL() ),
 			];
 
 			// find the location of the 'my preferences' link, and
@@ -69,32 +96,9 @@ class PvXRateHooks {
 
 			$personal_urls = [];
 			$tabKeysCount = count( $tab_keys );
-			for ( $i = 0; $i < $tabKeysCount; $i ++ ) {
+			for ( $i = 0; $i < $tabKeysCount; $i++ ) {
 				$personal_urls[$tab_keys[$i]] = $tab_values[$i];
 			}
-		}
-	}
-
-	/**
-	 * Add a tab or an icon the new way (MediaWiki 1.18+)
-	 *
-	 * @param SkinTemplate &$skin
-	 * @param array &$links Navigation links
-	 */
-	public static function onSkinTemplateNavigation( SkinTemplate &$skin, array &$links ) {
-		// The links array has four possible keys
-		//   (1) "namespace" => like Special, Page, Talk
-		//   (2) "views" => like Read, Edit, History
-		//   (3) "actions" => like Move, Delete, Protect (sometimes pushed into dropdown menus)
-		//   (4) "variants" => like French, German, Spanish
-		// but we're choosing views because Rating is like Editing
-		// Get the correct target build page (valid if in the build or build_talk namespaces)
-		$target = PvXRateHooks::getBuildPage( $skin->getTitle(), $skin->getUser() );
-		if ( $target !== null ) {
-			$links['views']['pvxrate'] = [
-				'text' => $skin->msg( 'pvxrate-tab-text' )->text(),
-				'href' => $skin->getTitle()->getLocalURL( "action=rate" ),
-			];
 		}
 	}
 
@@ -102,7 +106,7 @@ class PvXRateHooks {
 	 * Helper function
 	 * Find the build namespace page associated with the build. Includes sanity checks.
 	 */
-	public static function getBuildPage( Title $title, User $user ): ?Title {
+	public function getBuildPage( Title $title, User $user ): ?Title {
 		// Exit early if the voting user isn't logged in
 		if ( !$user->isRegistered() ) {
 			return null;
@@ -113,7 +117,7 @@ class PvXRateHooks {
 		if ( $ns != NS_BUILD && $ns != NS_BUILD_TALK ) {
 			return null;
 		}
-		$buildTitle = self::getBuildTitle( $title );
+		$buildTitle = $this->getBuildTitle( $title );
 
 		// If it's a redirect, exit. We don't follow redirects since it might confuse the user or
 		// lead to an endless loop (like if the talk page redirects to the user page or a subpage).
@@ -130,19 +134,13 @@ class PvXRateHooks {
 		return $buildTitle;
 	}
 
-	/**
-	 * @param Title $title
-	 * @return Title|null
-	 */
-	private static function getBuildTitle( Title $title ) {
+	private function getBuildTitle( Title $title ): ?Title {
 		// If we're on a subpage, get the root page title
 		$baseTitle = $title->getRootTitle();
 
 		if ( $title->getNamespace() == NS_BUILD_TALK ) {
-			$nsInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
-
 			// We're on the build talk page, so retrieve the rate page instead
-			return Title::castFromLinkTarget( $nsInfo->getSubjectPage( $baseTitle ) );
+			return Title::castFromLinkTarget( $this->namespaceInfo->getSubjectPage( $baseTitle ) );
 		}
 
 		return $baseTitle;

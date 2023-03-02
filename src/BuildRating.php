@@ -5,7 +5,6 @@ declare( strict_types=1 );
 namespace Fandom\PvXRate;
 
 class BuildRating {
-
 	/** @var int */
 	public $voteNumber;
 	/** @var float[] */
