@@ -23,8 +23,19 @@
 		}
 	},
 	"SpecialPages": {
-		"UserRatings": "Fandom\\PvXRate\\SpecialUserRatings",
-		"RecentRatings": "Fandom\\PvXRate\\SpecialRecentRatings"
+		"UserRatings": {
+			"class": "Fandom\\PvXRate\\SpecialUserRatings",
+			"services": [
+				"Fandom\\PvXRate\\RateService",
+				"Fandom\\PvXRate\\RatingListRenderer",
+				"UserIdentityLookup"
+			]
+
+		},
+		"RecentRatings": {
+			"class": "Fandom\\PvXRate\\SpecialRecentRatings",
+			"services": ["Fandom\\PvXRate\\RateService", "Fandom\\PvXRate\\RatingListRenderer"]
+		}
 	},
 	"Actions": {
 		"rate": "Fandom\\PvXRate\\RateAction"
@@ -67,16 +78,16 @@
 			"name": "Build_talk"
 		}
 	],
-	"Hooks": {
-		"LoadExtensionSchemaUpdates": [
-			"Fandom\\PvXRate\\PvXRateHooks::onLoadExtensionSchemaUpdates"
-		],
-		"PersonalUrls": [
-			"Fandom\\PvXRate\\PvXRateHooks::addURLToUserLinks"
-		],
-		"SkinTemplateNavigation::Universal": [
-			"Fandom\\PvXRate\\PvXRateHooks::onSkinTemplateNavigation"
-		]
+	"HookHandlers": {
+		"main": {
+			"class": "Fandom\\PvXRate\\PvXRateHooks",
+			"services": ["NamespaceInfo"]
+		}
 	},
+	"Hooks": {
+		"LoadExtensionSchemaUpdates": "main",
+		"SkinTemplateNavigation::Universal": "main"
+	},
+	"callback": "Fandom\\PvXRate\\PvXRateHooks::onRegistration",
 	"manifest_version": 1
 }

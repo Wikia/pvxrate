@@ -4,12 +4,14 @@ declare( strict_types=1 );
 
 namespace Fandom\PvXRate;
 
+use Article;
+use BadRequestException;
 use BannerNotificationsController;
 use FormlessAction;
 use IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
-use Page;
+use MWException;
 use Parser;
 use ParserOptions;
 use User;
@@ -19,16 +21,12 @@ class RateAction extends FormlessAction {
 	const ACTION_RESTORE = 'restore';
 	const ACTION_DELETE = 'delete';
 	const ACTION_EDIT = 'edit';
-	/** @var LinkRenderer */
-	private $linkRenderer;
-	/** @var RateService */
-	private $service;
-	/** @var Parser */
-	private $parser;
-	/** @var int */
-	private $editsReq;
+	private LinkRenderer $linkRenderer;
+	private RateService $service;
+	private Parser $parser;
+	private int $editsReq;
 
-	public function __construct( Page $page, IContextSource $context = null ) {
+	public function __construct( Article $page, IContextSource $context = null ) {
 		parent::__construct( $page, $context );
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getConfigFactory()->makeConfig( 'main' );
@@ -48,6 +46,7 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * Handle viewing of action.
+	 * @throws MWException
 	 */
 	public function onView(): void {
 		$output = $this->getOutput();
@@ -129,13 +128,16 @@ Pages in this namespace cannot be voted upon.
 			return;
 		}
 
-		throw new \BadRequestException( 'Unexpected action' );
+		throw new BadRequestException( 'Unexpected action' );
 	}
 
+	/**
+	 * @throws BadRequestException
+	 */
 	private function handlePost( ?string $subAction, ?int $rateId, bool $isAdmin ): void {
 		if ( $subAction == null ) {
 			if ( $rateId ) {
-				throw new \BadRequestException( 'Rate ID should not be provided for new rates' );
+				throw new BadRequestException( 'Rate ID should not be provided for new rates' );
 			}
 			$formData = $this->formData();
 			$validationError = $this->validateRate( $formData );
@@ -155,7 +157,7 @@ Pages in this namespace cannot be voted upon.
 
 		// all the other actions will require a valid rating
 		if ( $rateId == null ) {
-			throw new \BadRequestException( 'Rate ID missing' );
+			throw new BadRequestException( 'Rate ID missing' );
 		}
 		$rating = $this->service->findRatingById( $rateId );
 		if ( $rating == null || $rating['page_id'] !== $this->getTitle()->getId() ) {
@@ -241,7 +243,7 @@ Pages in this namespace cannot be voted upon.
 			return;
 		}
 
-		throw new \BadRequestException( 'Unexpected action' );
+		throw new BadRequestException( 'Unexpected action' );
 	}
 
 	private function validateRate( array $rate ): ?string {
@@ -258,6 +260,7 @@ Pages in this namespace cannot be voted upon.
 
 	/**
 	 * Check permissions, and add WikiText if permissions fail.
+	 * @throws MWException
 	 */
 	public function checkPermissions(): bool {
 		$output = $this->getOutput();
@@ -289,7 +292,9 @@ For security reasons you need to fulfill the following requirements in order to 
 __NOEDITSECTION__
 For security reasons you need to fulfill the following requirements in order to submit a vote:
 * You need to log in.
-* You need to authenticate your e-mail address. Please edit/add your e-mail address using [[Special:Preferences]] and a confirmation e-mail will be sent to that address. Follow the instructions in the e-mail to confirm that the account is actually yours.
+* You need to authenticate your e-mail address. Please edit/add your e-mail address using [[Special:Preferences]]
+and a confirmation e-mail will be sent to that address. Follow the instructions in the e-mail to confirm
+ that the account is actually yours.
 * You need to make at least ' . $this->editsReq . ' edits to the wiki.';
 			$output->addWikiTextAsContent( $perm_msg );
 			return false;
@@ -300,13 +305,18 @@ For security reasons you need to fulfill the following requirements in order to 
 * You need to log in.
 * You need to authenticate your e-mail address.
 * You need to make at least ' . $this->editsReq .
-						' contributions to the wiki. A contribution is any edit to any page. A good way to get your first few contributions is adding some information about yourself to [[Special:Mypage|your userpage]].';
+						' contributions to the wiki. A contribution is any edit to any page. A good way to get
+						your first few contributions is adding some information
+						about yourself to [[Special:Mypage|your userpage]].';
 			$output->addWikiTextAsContent( $perm_msg );
 			return false;
 		} elseif ( !$this->getUser()->isAllowed( 'ratebuild' ) ) {
 			$perm_msg = '=== Permissions error. ===
 __NOEDITSECTION__
-Whilst your account meets all of the basic requirements for the rating permission (logged in, not blocked, email authenticated, edit count threshold met), miraculously your user account lacks the "ratebuild" rights. This may indicate a bug with the PvXRate extension. Please report this bug to your site administrator.';
+Whilst your account meets all of the basic requirements for the rating permission
+(logged in, not blocked, email authenticated, edit count threshold met),
+miraculously your user account lacks the "ratebuild" rights. This may indicate a bug with the PvXRate extension.
+Please report this bug to your site administrator.';
 			$output->addWikiTextAsContent( $perm_msg );
 			return false;
 		}
@@ -318,7 +328,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 	 * Format a link for use elsewhere
 	 * @param string $label link title
 	 * @param string $subAction sets the ?sub-action= request variable.
-	 * @param string $rateId the build id. sets ?rateId=
+	 * @param int $rateId the build id. sets ?rateId=
 	 * @return string
 	 */
 	public function rateLink( string $label, string $subAction, int $rateId ): string {
@@ -396,17 +406,17 @@ Whilst your account meets all of the basic requirements for the rating permissio
 		}
 		return '
 <div class="rating">
-	<table border="1" cellpadding="0" cellspacing="3">
+	<table>
 		<tr>
 			<td class="tdrating">
 				<div class="r1" style="width:' . $overall_rating_bar_width . 'px;"><span>Overall</span></div>
 			</td>
 			<td class="tdresult">' . sprintf( '%3.1f', round( $cur_score * 10 ) / 10 ) . '</td>
 			<td class="tdcomment" rowspan="4">
-				<table class="tablecomment" border="0" style="border:0px;">
+				<table class="tablecomment" style="border:0;">
 					<tr>
 						<td class="tduser">' . $tduser . '</td>
-						<td class="tdedit"><div align="right"> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
+						<td class="tdedit"><div> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
 					</tr>
 					<tr>
 						<td colspan="2">' . $comment . '</td>
@@ -467,26 +477,27 @@ Whilst your account meets all of the basic requirements for the rating permissio
 			foreach ( $current as $array ) {
 				if ( $read_only ) {
 					$out_all .= $this->ratePrint( $array, '' );
-					$out_all_count ++;
+					$out_all_count++;
 				} else {
 					$rateId = $array['rate_id'];
 					if ( $array[self::ACTION_ROLLBACK] ) {
-						// Rating has been removed, and is owned by the current logged in user
+						// Rating has been removed, and is owned by the current logged-in user
 						if ( $array['user_id'] == $this->getUser()->getID() ) {
 							$link = $this->deleteForm( $rateId );
 							$link .= $this->rateLink( 'Edit', self::ACTION_EDIT, $rateId );
 							$out_rmv = $this->ratePrint( $array, $link );
-							$out_rmv_count ++;
+							$out_rmv_count++;
 							$show_form = false;
-						} // Rating has been removed, and the current logged in user has permissions to restore the rating (admin)
-						elseif ( $this->getUser()->isAllowed( 'vote_rollback' ) ) {
+						} elseif ( $this->getUser()->isAllowed( 'vote_rollback' ) ) {
+							// Rating has been removed, and the current logged-in user has permissions
+							// to restore the rating (admin)
 							$link = $this->rateLink( 'Restore', self::ACTION_RESTORE, $rateId );
 							$out_rmv .= $this->ratePrint( $array, $link );
-							$out_rmv_count ++;
-						} // Rating has been removed, and its somebody elses
-						else {
+							$out_rmv_count++;
+						} else {
+							// Rating has been removed, and its somebody elses
 							$out_rmv .= $this->ratePrint( $array, '' );
-							$out_rmv_count ++;
+							$out_rmv_count++;
 						}
 					} else {
 						// Rating is current, and is owned by the current logged in user
@@ -494,17 +505,17 @@ Whilst your account meets all of the basic requirements for the rating permissio
 							$link = $this->deleteForm( $rateId );
 							$link .= $this->rateLink( 'Edit', self::ACTION_EDIT, $rateId );
 							$out_own = $this->ratePrint( $array, $link );
-							$out_own_count ++;
+							$out_own_count++;
 							$show_form = false;
-						} // Rating is current, and the current logged in user has permissions to remove the rating (admin)
-						elseif ( $this->getUser()->isAllowed( 'vote_rollback' ) ) {
+						} elseif ( $this->getUser()->isAllowed( 'vote_rollback' ) ) {
+							// Rating is current, and the current logged in user has permissions to remove the rating (admin)
 							$link = $this->rateLink( 'Remove', self::ACTION_ROLLBACK, $rateId );
 							$out_all .= $this->ratePrint( $array, $link );
-							$out_all_count ++;
-						} // Rating is current, and its somebody elses
-						else {
+							$out_all_count++;
+						} else {
+							// Rating is current, and it's somebody elses
 							$out_all .= $this->ratePrint( $array, '' );
-							$out_all_count ++;
+							$out_all_count++;
 						}
 					}
 				}
@@ -555,9 +566,17 @@ Whilst your account meets all of the basic requirements for the rating permissio
 
 		# tooltip text for the above criteria
 		$rate_descr = [
-			1 => 'This criterion describes how effective the build does what it was designed for. That is, how much damage does a spiker build deal, a healer build heal or a protector build prevent? How good is the chance to get through the specified area with a running build or to reach and defeat the specified foes with a farming build?',
-			2 => 'This criterion describes how flexible the build is when used in a situation slightly different from what the build was designed for. This includes the ability to change strategy in case a foe shows unexpected actions, in case an ally does not perform as expected, or when used in a different location than originally intended.',
-			3 => 'This criterion describes how new the idea behind this build is. Does it use a new approach for dealing with a known task or even act as a precursor for dealing with a previously unconsidered task? To what extend is it expected to become a prototype for a new class of builds?',
+			1 => 'This criterion describes how effective the build does what it was designed for.
+			That is, how much damage does a spiker build deal, a healer build heal or a protector build prevent?
+			How good is the chance to get through the specified area with a running build
+			or to reach and defeat the specified foes with a farming build?',
+			2 => 'This criterion describes how flexible the build is when used in a situation slightly different
+			from what the build was designed for. This includes the ability to change strategy in case a foe
+			shows unexpected actions, in case an ally does not perform as expected, or when used
+			in a different location than originally intended.',
+			3 => 'This criterion describes how new the idea behind this build is. Does it use a new approach
+			for dealing with a known task or even act as a precursor for dealing with a previously unconsidered task?
+			To what extend is it expected to become a prototype for a new class of builds?',
 		];
 
 		$r = $this->service->getBuildRating( $this->getTitle()->getId() );
@@ -565,14 +584,13 @@ Whilst your account meets all of the basic requirements for the rating permissio
 		# fill histogram
 		# $r[x][y] is number of 'y' ratings on criterion 'x'
 
-
 		# overall r output - Bars increase in horizontal direction
 		$out = ( '<h2> Rating totals: ' . $r->voteNumber . ' votes</h2>' );
-		$out .= '<table border="0" cellpadding="0" cellspacing="0"><tr>';
+		$out .= '<table><tr>';
 		$out .= '
 <td>
 	<div class="sum">
-		<table border="0" cellpadding="0" cellspacing="3">
+		<table>
 			<tr>
 				<td class="tdrating">
 					<div class="r1" style="width:' . round( $r->averages[0] * 168 / 5 ) . 'px;"><span>Overall</span></div>
@@ -603,9 +621,9 @@ Whilst your account meets all of the basic requirements for the rating permissio
 
 		# histograms
 		# $r[c][q] is number of 'q' ratings on criterion 'c'
-		for ( $c = 1; $c <= 2; $c ++ ) {
+		for ( $c = 1; $c <= 2; $c++ ) {
 			# normalize histogram
-			for ( $q = 0; $q <= 5; $q ++ ) {
+			for ( $q = 0; $q <= 5; $q++ ) {
 				if ( $r->voteNumber > 0 ) {
 					$r->histogram[$c][$q] = round( $r->histogram[$c][$q] / $r->voteNumber * 77 );
 				} else {
@@ -617,7 +635,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 			$out .= '
 <td>
 	<div class="result">
-		<table border="1" cellpadding="0" cellspacing="3">
+		<table>
 			<tr>
 				<td colspan="6" class="tdresult"><span title="' . $rate_descr[$c] . '">' . $rate_names[$c] . '</span></td>
 			</tr>
@@ -653,6 +671,9 @@ Whilst your account meets all of the basic requirements for the rating permissio
 		return $out;
 	}
 
+	/**
+	 * @throws MWException
+	 */
 	public function rateCheckRights( int $rateId ): bool {
 		$rating = $this->service->findRatingById( $rateId );
 		if ( !$rating ) {
@@ -672,7 +693,8 @@ Whilst your account meets all of the basic requirements for the rating permissio
 
 	/**
 	 * Generates the rate form
-	 * @param array $rateId Values to populate form with
+	 * @param int|null $rateId Values to populate form with
+	 * @return string
 	 */
 	public function rateForm( ?int $rateId ): string {
 		$rate_names = [
@@ -682,9 +704,18 @@ Whilst your account meets all of the basic requirements for the rating permissio
 		];
 
 		$rate_descr = [
-			1 => 'This criterion describes how effective the build does what it was designed for. That is, how much damage does a spiker build deal, a healer build heal or a protector build prevent? How good is the chance to get through the specified area with a running build or to reach and defeat the specified foes with a farming build?',
-			2 => 'This criterion describes how flexible the build is when used in a situation slightly different from what the build was designed for. This includes the ability to change strategy in case a foe shows unexpected actions, in case an ally does not perform as expected, or when used in a different location than originally intended.',
-			3 => 'This criterion describes how new the idea behind this build is. Does it use a new approach for dealing with a known task or even act as a precursor for dealing with a previously unconsidered task? To what extend is it expected to become a prototype for a new class of builds?',
+			1 => 'This criterion describes how effective the build does what it was designed for.
+			That is, how much damage does a spiker build deal, a healer build heal or a protector build prevent?
+			How good is the chance to get through the specified area with a running build or to reach
+			and defeat the specified foes with a farming build?',
+			2 => 'This criterion describes how flexible the build is when used in a situation slightly different
+			from what the build was designed for. This includes the ability to change strategy in case
+			a foe shows unexpected actions, in case an ally does not perform as expected,
+			or when used in a different location than originally intended.',
+			3 => 'This criterion describes how new the idea behind this build is.
+			Does it use a new approach for dealing with a known task or even act as a precursor
+			for dealing with a previously unconsidered task? To what extend
+			is it expected to become a prototype for a new class of builds?',
 		];
 
 		// ---------- Loading form with values.
@@ -722,7 +753,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 						  $checked . '>' . '</div>' );
 				$out .= ( '</td></tr>' );
 			} else {
-				for ( $i = 0; $i <= 5; $i ++ ) {
+				for ( $i = 0; $i <= 5; $i++ ) {
 					if ( ( $input ) && ( $input[$key - 1] == $i ) ) {
 						$checked = ' checked ';
 					} else {
@@ -739,7 +770,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 			$out .= ( '</td></tr>' );
 		}
 
-		$out .= ( '<tr valign="top"><td><span class="rating_cat">Comments</span></td>' .
+		$out .= ( '<tr><td><span class="rating_cat">Comments</span></td>' .
 				  '<td><textarea class="rating_text" name="comment" cols="10" rows="5">' . $comment .
 				  '</textarea>' );
 		$out .= ( '<input name="rateId" type="hidden" value="' . $update . '" />' );
@@ -749,7 +780,7 @@ Whilst your account meets all of the basic requirements for the rating permissio
 
 	/**
 	 * Generate rating rollback form
-	 * @param array $rateId values to populate form with
+	 * @param int $rateId values to populate form with
 	 * @return string
 	 */
 	public function rateRollback( int $rateId ): string {
@@ -758,7 +789,8 @@ Whilst your account meets all of the basic requirements for the rating permissio
 
 		$out = ( '<div class="ratingform"><form method="post" action="' .
 				 $this->getTitle()->getFullURL( 'action=rate&sub-action=rollback' ) . '"><table class="rating_table">' );
-		$out .= ( '<tr valign="top"><td><span class="rating_cat">Reason</span></td><td><textarea class="rating_text" name="reason" cols="10" rows="5">' .
+		$out .= ( '<tr><td><span class="rating_cat">Reason</span></td><td>
+				<textarea class="rating_text" name="reason" cols="10" rows="5">' .
 				  $default_comment . '</textarea>' );
 		$out .= ( '<input name="rollback" type="hidden" value=1 /><input name="rateId" type="hidden" value="' .
 				  $rateId . '" />' );
@@ -777,7 +809,8 @@ Whilst your account meets all of the basic requirements for the rating permissio
 		$out =
 			( '<div class="ratingform"><form method="post" action="' .
 			  $this->getTitle()->getFullURL( 'action=rate' . $action ) . '"><table class="rating_table">' );
-		$out .= ( '<tr valign="top"><td><span class="rating_cat">Reason</span></td><td><textarea class="rating_text" name="reason" cols="10" rows="5">' .
+		$out .= ( '<tr><td><span class="rating_cat">Reason</span></td><td>
+				<textarea class="rating_text" name="reason" cols="10" rows="5">' .
 				  $default_comment . '</textarea>' );
 		$out .= ( '<input name="restore" type="hidden" value=1 /><input name="rateId" type="hidden" value="' .
 				  $rateId . '" />' );

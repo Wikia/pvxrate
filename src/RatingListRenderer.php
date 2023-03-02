@@ -6,19 +6,19 @@ namespace Fandom\PvXRate;
 
 use Language;
 use MediaWiki\User\UserOptionsLookup;
+use MWException;
 use OutputPage;
 use User;
 
 class RatingListRenderer {
 
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	public function __construct(UserOptionsLookup $userOptionsLookup ) {
-		$this->userOptionsLookup = $userOptionsLookup;
+	public function __construct( private UserOptionsLookup $userOptionsLookup ) {
 	}
 
-	public function render( array $ratings, OutputPage $output, User $user, Language $language ) {
+	/**
+	 * @throws MWException
+	 */
+	public function render( array $ratings, OutputPage $output, User $user, Language $language ): void {
 		$timeCorrection = $this->userOptionsLookup->getOption( $user, 'timecorrection' );
 
 		if ( !$ratings ) {
@@ -53,6 +53,7 @@ class RatingListRenderer {
 					$user_link = '';
 				}
 
+				$admin_link = '';
 				$page_link =
 					'[[Build:' . $rating['page_title'] . '|' . $rating['page_title'] . ']] - [[Build_talk:' .
 					$rating['page_title'] . '|talk]] - [{{FULLURL:Build:' .
@@ -74,23 +75,23 @@ class RatingListRenderer {
 				$out .= $page_link;
 				$out .= '; ';
 
-				$total = $rating['rating'][0] * .8 + $rating['rating'][1] * .2 + $rating['rating'][2] * .0;
+				$total = $rating['rating'][0] * 0.8 + $rating['rating'][1] * 0.2 + $rating['rating'][2] * 0.0;
 				if ( $total < 3.75 ) {
 					$rating['text'] = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'trash\'\')';
 				} elseif ( $total < 4.75 ) {
-					$rating['text']  = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'good\'\')';
+					$rating['text'] = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'good\'\')';
 				} elseif ( $total >= 4.75 ) {
-					$rating['text']  = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'great\'\')';
+					$rating['text'] = 'Rating: \'\'\'' . $total . '\'\'\' (\'\'great\'\')';
 				}
 
 				if ( $rating['rollback'] ) {
 					$out .= '\'\'\'' . $admin_link . '\'\'\'' . ' removed ' . strtolower( $rating['text'] ) . ' posted by: ' .
 							$user_link;
-				} elseif ( !$rating['rollback'] && $rating['reason'] ) {
+				} elseif ( $rating['reason'] ) {
 					$out .= '\'\'\'' . $admin_link . '\'\'\'' . ' restored ' . strtolower( $rating['text'] ) . ' posted by: ' .
 							$user_link;
 				} else {
-					$out .= $rating['text'] ;
+					$out .= $rating['text'];
 					$out .= ' . . ';
 					$out .= ' E:' . $rating['rating'][0];
 					$out .= ' U:' . $rating['rating'][1];

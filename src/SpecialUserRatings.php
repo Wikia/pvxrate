@@ -3,47 +3,40 @@
 namespace Fandom\PvXRate;
 
 use BadRequestException;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentityLookup;
+use MWException;
 use SpecialPage;
 use Title;
-use User;
-use Wikimedia\Rdbms\DBConnRef;
 
 /**
  * Curse Inc.
  * PvX Rate
  * Adds tab to Rate articles, List user ratings, and list recent ratings.
  *
- * @author        Cameron Chunn
- * @copyright    (c) 2015 Curse Inc.
- * @license        GNU General Public License v2.0 or later
- * @package        PvXRate
- * @link        https://gitlab.com/hydrawiki
+ * @author		Cameron Chunn
+ * @copyright	(c) 2015 Curse Inc.
+ * @license		GPL-2.0-or-later
+ * @package 	PvXRate
+ * @link		https://gitlab.com/hydrawiki
  *
- **/
+ */
 class SpecialUserRatings extends SpecialPage {
-
-	/** @var RateService */
-	private $rateService;
-	/** @var RatingListRenderer */
-	private $renderer;
-	/** @var UserIdentityLookup */
-	private $userLookup;
-
-	public function __construct() {
+	public function __construct(
+		private RateService $rateService,
+		private RatingListRenderer $renderer,
+		private UserIdentityLookup $userLookup
+	) {
 		parent::__construct(
 			'UserRatings', // name
 			null, // required user right
 			true // display on Special:Specialpages
 		);
-
-		$services = MediaWikiServices::getInstance();
-		$this->rateService = $services->getService( RateService::class );
-		$this->renderer = $services->getService( RatingListRenderer::class );
-		$this->userLookup = $services->getUserIdentityLookup();
 	}
 
+	/**
+	 * @throws BadRequestException
+	 * @throws MWException
+	 */
 	public function execute( $subPage = null ) {
 		$this->getOutput()->addModules( 'ext.pvxrate' );
 		$this->getOutput()->setPageTitle( wfMessage( 'userratings' ) );
@@ -52,8 +45,11 @@ class SpecialUserRatings extends SpecialPage {
 		$this->renderer->render( $ratings, $this->getOutput(), $this->getUser(), $this->getLanguage() );
 	}
 
+	/**
+	 * @throws BadRequestException
+	 */
 	private function getTargetUserId( ?string $par ): int {
-		// Default to showing the logged in user's contributions
+		// Default to showing the logged-in user's contributions
 		if ( !empty( $par ) ) {
 			$targetUserSafe = Title::makeTitleSafe( NS_USER, $par );
 			if ( $targetUserSafe ) {
