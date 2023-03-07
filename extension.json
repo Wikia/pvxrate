@@ -82,10 +82,13 @@
 		"main": {
 			"class": "Fandom\\PvXRate\\PvXRateHooks",
 			"services": ["NamespaceInfo"]
+		},
+		"db": {
+			"class": "Fandom\\PvXRate\\SchemaHooks"
 		}
 	},
 	"Hooks": {
-		"LoadExtensionSchemaUpdates": "main",
+		"LoadExtensionSchemaUpdates": "db",
 		"SkinTemplateNavigation::Universal": "main"
 	},
 	"callback": "Fandom\\PvXRate\\PvXRateHooks::onRegistration",

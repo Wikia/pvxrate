@@ -5,7 +5,6 @@ declare( strict_types=1 );
 namespace Fandom\PvXRate;
 
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
-use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 use MWException;
 use NamespaceInfo;
 use SkinTemplate;
@@ -25,25 +24,13 @@ use User;
  * @link		https://gitlab.com/hydrawiki
  *
  */
-class PvXRateHooks implements
-	LoadExtensionSchemaUpdatesHook,
-	SkinTemplateNavigation__UniversalHook
-{
+class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 
 	public function __construct( private NamespaceInfo $namespaceInfo ) {
 	}
 
 	public static function onRegistration(): void {
 		require_once __DIR__ . '/defines.php';
-	}
-
-	public function onLoadExtensionSchemaUpdates( $updater ) {
-		$updater->addExtensionUpdate( [
-			'addTable',
-			'rating',
-			__DIR__ . '/install/sql/table_rating.sql',
-			true,
-		] );
 	}
 
 	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
