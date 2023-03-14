@@ -11,7 +11,7 @@ class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
 		$updater->addExtensionUpdate( [
 			'addTable',
 			'rating',
-			__DIR__ . '/install/sql/table_rating.sql',
+			__DIR__ . '/../install/sql/table_rating.sql',
 			true,
 		] );
 	}
