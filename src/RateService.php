@@ -41,7 +41,7 @@ class RateService {
 
 		$r = new BuildRating();
 		$r->voteNumber = (float)$res->count;
-		if ( $res ) {
+		if ( $res && $r->voteNumber !== 0.0 ) {
 			$r->averages = [
 				( $res->r1 * self::WEIGHTS[1] + $res->r2 * self::WEIGHTS[2] + $res->r3 * self::WEIGHTS[3] ) /
 				$r->voteNumber,
