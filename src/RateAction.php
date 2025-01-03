@@ -5,7 +5,6 @@ declare( strict_types=1 );
 namespace Fandom\PvXRate;
 
 use Article;
-use BadRequestException;
 use BannerNotificationsController;
 use FormlessAction;
 use IContextSource;
@@ -14,6 +13,7 @@ use MediaWiki\MediaWikiServices;
 use MWException;
 use Parser;
 use ParserOptions;
+use RuntimeException;
 use User;
 
 class RateAction extends FormlessAction {
@@ -104,11 +104,6 @@ Pages in this namespace cannot be voted upon.
 
 		// sub-action=delete|edit|rollback
 
-		if ( $subAction == null ) {
-			$this->ratePrintAll( true, true, true, false );
-			return;
-		}
-
 		if ( ( $subAction == self::ACTION_EDIT ) && ( $this->rateCheckRights( $rateId ) ) ) {
 			$output->addHtml( '<h2> Rate this build </h2>' );
 			$output->addHtml( $this->rateForm( $rateId ) );
@@ -128,16 +123,17 @@ Pages in this namespace cannot be voted upon.
 			return;
 		}
 
-		throw new BadRequestException( 'Unexpected action' );
+		// default action
+		$this->ratePrintAll( true, true, true, false );
 	}
 
 	/**
-	 * @throws BadRequestException
+	 * @throws RuntimeException
 	 */
 	private function handlePost( ?string $subAction, ?int $rateId, bool $isAdmin ): void {
 		if ( $subAction == null ) {
 			if ( $rateId ) {
-				throw new BadRequestException( 'Rate ID should not be provided for new rates' );
+				throw new RuntimeException( 'Rate ID should not be provided for new rates' );
 			}
 			$formData = $this->formData();
 			$validationError = $this->validateRate( $formData );
@@ -157,7 +153,7 @@ Pages in this namespace cannot be voted upon.
 
 		// all the other actions will require a valid rating
 		if ( $rateId == null ) {
-			throw new BadRequestException( 'Rate ID missing' );
+			throw new RuntimeException( 'Rate ID missing' );
 		}
 		$rating = $this->service->findRatingById( $rateId );
 		if ( $rating == null || $rating['page_id'] !== $this->getTitle()->getId() ) {
@@ -243,7 +239,7 @@ Pages in this namespace cannot be voted upon.
 			return;
 		}
 
-		throw new BadRequestException( 'Unexpected action' );
+		throw new RuntimeException( 'Unexpected action' );
 	}
 
 	private function validateRate( array $rate ): ?string {
