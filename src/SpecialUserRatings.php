@@ -2,9 +2,9 @@
 
 namespace Fandom\PvXRate;
 
-use BadRequestException;
 use MediaWiki\User\UserIdentityLookup;
 use MWException;
+use RuntimeException;
 use SpecialPage;
 use Title;
 
@@ -34,7 +34,6 @@ class SpecialUserRatings extends SpecialPage {
 	}
 
 	/**
-	 * @throws BadRequestException
 	 * @throws MWException
 	 */
 	public function execute( $subPage = null ) {
@@ -46,7 +45,7 @@ class SpecialUserRatings extends SpecialPage {
 	}
 
 	/**
-	 * @throws BadRequestException
+	 * @throws RuntimeException
 	 */
 	private function getTargetUserId( ?string $par ): int {
 		// Default to showing the logged-in user's contributions
@@ -58,7 +57,7 @@ class SpecialUserRatings extends SpecialPage {
 					return $user->getId();
 				}
 			}
-			throw new BadRequestException( 'Invalid user' );
+			throw new RuntimeException( 'Invalid user' );
 		} else {
 			// or show for current user
 			return $this->getUser()->getID();
