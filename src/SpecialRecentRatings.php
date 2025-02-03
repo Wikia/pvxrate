@@ -2,8 +2,7 @@
 
 namespace Fandom\PvXRate;
 
-use MWException;
-use SpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Curse Inc.
@@ -20,8 +19,8 @@ use SpecialPage;
 class SpecialRecentRatings extends SpecialPage {
 
 	public function __construct(
-		private RateService $rateService,
-		private RatingListRenderer $renderer
+		private readonly RateService $rateService,
+		private readonly RatingListRenderer $renderer
 	) {
 		parent::__construct(
 			'RecentRatings', // name
@@ -30,10 +29,7 @@ class SpecialRecentRatings extends SpecialPage {
 		);
 	}
 
-	/**
-	 * @throws MWException
-	 */
-	public function execute( $subPage = null ) {
+	public function execute( $subPage = null ): void {
 		$this->getOutput()->addModules( 'ext.pvxrate' );
 		$this->getOutput()->setPageTitle( wfMessage( 'recentratings' ) );
 

@@ -5,28 +5,27 @@ declare( strict_types=1 );
 namespace Fandom\PvXRate;
 
 use Article;
-use BannerNotificationsController;
+use Fandom\BannerNotifications\Controller\BannerNotificationsController;
 use FormlessAction;
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
-use MWException;
-use Parser;
-use ParserOptions;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\User\User;
 use RuntimeException;
-use User;
 
 class RateAction extends FormlessAction {
 	const ACTION_ROLLBACK = 'rollback';
 	const ACTION_RESTORE = 'restore';
 	const ACTION_DELETE = 'delete';
 	const ACTION_EDIT = 'edit';
-	private LinkRenderer $linkRenderer;
-	private RateService $service;
-	private Parser $parser;
-	private int $editsReq;
+	private readonly LinkRenderer $linkRenderer;
+	private readonly RateService $service;
+	private readonly Parser $parser;
+	private readonly int $editsReq;
 
-	public function __construct( Article $page, IContextSource $context = null ) {
+	public function __construct( Article $page, ?IContextSource $context = null ) {
 		parent::__construct( $page, $context );
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getConfigFactory()->makeConfig( 'main' );
@@ -46,7 +45,6 @@ class RateAction extends FormlessAction {
 
 	/**
 	 * Handle viewing of action.
-	 * @throws MWException
 	 */
 	public function onView(): void {
 		$output = $this->getOutput();
@@ -256,7 +254,6 @@ Pages in this namespace cannot be voted upon.
 
 	/**
 	 * Check permissions, and add WikiText if permissions fail.
-	 * @throws MWException
 	 */
 	public function checkPermissions(): bool {
 		$output = $this->getOutput();
@@ -444,11 +441,11 @@ Please report this bug to your site administrator.';
 
 	/**
 	 * print ratings for a specific build
-	 * @param boolean $show_own Show users own rating or not
-	 * @param boolean $show_form Show rating form
-	 * @param boolean $show_all Show all current ratings
-	 * @param boolean $read_only if true, just call ratePrint
-	 * @return void, prints to screen
+	 * @param bool $show_own Show users own rating or not
+	 * @param bool $show_form Show rating form
+	 * @param bool $show_all Show all current ratings
+	 * @param bool $read_only if true, just call ratePrint
+	 * @return void prints to screen
 	 */
 	public function ratePrintAll(
 		bool $show_own,
@@ -667,9 +664,6 @@ Please report this bug to your site administrator.';
 		return $out;
 	}
 
-	/**
-	 * @throws MWException
-	 */
 	public function rateCheckRights( int $rateId ): bool {
 		$rating = $this->service->findRatingById( $rateId );
 		if ( !$rating ) {

@@ -30,11 +30,13 @@
 				"Fandom\\PvXRate\\RatingListRenderer",
 				"UserIdentityLookup"
 			]
-
 		},
 		"RecentRatings": {
 			"class": "Fandom\\PvXRate\\SpecialRecentRatings",
-			"services": ["Fandom\\PvXRate\\RateService", "Fandom\\PvXRate\\RatingListRenderer"]
+			"services": [
+				"Fandom\\PvXRate\\RateService",
+				"Fandom\\PvXRate\\RatingListRenderer"
+			]
 		}
 	},
 	"Actions": {
@@ -45,7 +47,9 @@
 			"i18n"
 		]
 	},
-	"ServiceWiringFiles": ["ServiceWiring.php"],
+	"ServiceWiringFiles": [
+		"ServiceWiring.php"
+	],
 	"AutoloadNamespaces": {
 		"Fandom\\PvXRate\\": "src"
 	},
@@ -81,7 +85,9 @@
 	"HookHandlers": {
 		"main": {
 			"class": "Fandom\\PvXRate\\PvXRateHooks",
-			"services": ["NamespaceInfo"]
+			"services": [
+				"NamespaceInfo"
+			]
 		},
 		"db": {
 			"class": "Fandom\\PvXRate\\SchemaHooks"

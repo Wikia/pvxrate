@@ -4,20 +4,16 @@ declare( strict_types=1 );
 
 namespace Fandom\PvXRate;
 
-use Language;
+use MediaWiki\Language\Language;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\User\User;
 use MediaWiki\User\UserOptionsLookup;
-use MWException;
-use OutputPage;
-use User;
 
 class RatingListRenderer {
 
-	public function __construct( private UserOptionsLookup $userOptionsLookup ) {
+	public function __construct( private readonly UserOptionsLookup $userOptionsLookup ) {
 	}
 
-	/**
-	 * @throws MWException
-	 */
 	public function render( array $ratings, OutputPage $output, User $user, Language $language ): void {
 		$timeCorrection = $this->userOptionsLookup->getOption( $user, 'timecorrection' );
 
