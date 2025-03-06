@@ -15,7 +15,7 @@ class RateService {
 		3 => 0.0,
 	];
 
-	public function __construct( private ILoadBalancer $lb ) {
+	public function __construct( private readonly ILoadBalancer $lb ) {
 	}
 
 	/**
@@ -36,7 +36,8 @@ class RateService {
 			[
 				'rollback != 1',
 				"page_id = $pageId",
-			]
+			],
+			__METHOD__
 		);
 
 		$r = new BuildRating();
@@ -82,7 +83,8 @@ class RateService {
 	public function deleteRating( int $rateId ): void {
 		$this->lb->getConnection( DB_PRIMARY )->delete( 'rating', [
 			'rate_id' => $rateId,
-		] );
+		],
+		__METHOD__ );
 	}
 
 	/**
@@ -103,7 +105,8 @@ class RateService {
 				'rating2' => $input['rating'][1],
 				'rating3' => $input['rating'][2],
 				'ip_address' => '',
-			]
+			],
+			__METHOD__
 		);
 	}
 
@@ -151,7 +154,8 @@ class RateService {
 				->selectRow(
 					[ 'rating' ],
 					[ '*' ],
-					[ 'rate_id' => $rateId ]
+					[ 'rate_id' => $rateId ],
+		__METHOD__
 				)
 		);
 	}
@@ -168,7 +172,8 @@ class RateService {
 				'rating2' => $input['rating'][1],
 				'rating3' => $input['rating'][2],
 			],
-			[ 'rate_id' => $rateId ]
+			[ 'rate_id' => $rateId ],
+			__METHOD__
 		);
 	}
 
@@ -180,7 +185,8 @@ class RateService {
 				'reason' => $reason,
 				'admin_id' => $adminId,
 			],
-			[ 'rate_id' => $rateId ]
+			[ 'rate_id' => $rateId ],
+			__METHOD__
 		);
 	}
 

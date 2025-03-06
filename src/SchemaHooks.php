@@ -7,7 +7,7 @@ namespace Fandom\PvXRate;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
-	public function onLoadExtensionSchemaUpdates( $updater ) {
+	public function onLoadExtensionSchemaUpdates( $updater ): void {
 		$updater->addExtensionUpdate( [
 			'addTable',
 			'rating',

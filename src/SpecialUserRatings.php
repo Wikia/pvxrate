@@ -2,11 +2,10 @@
 
 namespace Fandom\PvXRate;
 
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityLookup;
-use MWException;
 use RuntimeException;
-use SpecialPage;
-use Title;
 
 /**
  * Curse Inc.
@@ -22,9 +21,9 @@ use Title;
  */
 class SpecialUserRatings extends SpecialPage {
 	public function __construct(
-		private RateService $rateService,
-		private RatingListRenderer $renderer,
-		private UserIdentityLookup $userLookup
+		private readonly RateService $rateService,
+		private readonly RatingListRenderer $renderer,
+		private readonly UserIdentityLookup $userLookup
 	) {
 		parent::__construct(
 			'UserRatings', // name
@@ -33,10 +32,7 @@ class SpecialUserRatings extends SpecialPage {
 		);
 	}
 
-	/**
-	 * @throws MWException
-	 */
-	public function execute( $subPage = null ) {
+	public function execute( $subPage = null ): void {
 		$this->getOutput()->addModules( 'ext.pvxrate' );
 		$this->getOutput()->setPageTitle( wfMessage( 'userratings' ) );
 		$targetUserId = $this->getTargetUserId( $subPage );

@@ -5,12 +5,11 @@ declare( strict_types=1 );
 namespace Fandom\PvXRate;
 
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
-use MWException;
-use NamespaceInfo;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use SkinTemplate;
-use SpecialPage;
-use Title;
-use User;
 
 /**
  * Curse Inc.
@@ -26,7 +25,7 @@ use User;
  */
 class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 
-	public function __construct( private NamespaceInfo $namespaceInfo ) {
+	public function __construct( private readonly NamespaceInfo $namespaceInfo ) {
 	}
 
 	public static function onRegistration(): void {
@@ -57,9 +56,8 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 	 * the 'adminlinks' permission.
 	 *
 	 * Modified from https://www.mediawiki.org/wiki/Extension:Admin_Links
-	 * @throws MWException
 	 */
-	private function addURLToUserLinks( array &$personal_urls, SkinTemplate $skinTemplate ) {
+	private function addURLToUserLinks( array &$personal_urls, SkinTemplate $skinTemplate ): void {
 		if ( $skinTemplate->getUser()->isRegistered() ) {
 			$ur = SpecialPage::getTitleFor( 'UserRatings' );
 			$href = $ur->getLocalURL();
