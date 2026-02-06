@@ -391,9 +391,7 @@ Please report this bug to your site administrator.';
 
 		$overall_rating_bar_width = ( $cur_score / $number_max ) * $bar_width;
 
-		// this is deprecated but as of now I don't believe there's a replacement
-		// $this->parser->mShowToc = false;
-		$parsedComment = $this->parseText( $ratings['comment'] ?: '' );
+		$parsedComment = htmlspecialchars( $ratings['comment'] ?: '' );
 
 		if ( $ratings[self::ACTION_ROLLBACK] ) {
 			$comment =
@@ -405,8 +403,8 @@ Please report this bug to your site administrator.';
 
 		$timestamp = strtotime( $ratings['timestamp'] );
 		$timestr = date( 'H:i, d M Y', $timestamp ) . ' (EST)'; # GMT on test box, EST on main server
+		$user = User::newFromName( $userName );
 
-		$tduser = $this->parseText( '[[User:' . $userName . '|' . $userName . ']]' );
 		if ( $rate[3] > 0 ) {
 			$inno_out = 'X';
 		} else {
@@ -423,7 +421,7 @@ Please report this bug to your site administrator.';
 			<td class="tdcomment" rowspan="4">
 				<table class="tablecomment" style="border:0;">
 					<tr>
-						<td class="tduser">' . $tduser . '</td>
+						<td class="tduser"> <a href="' . $user->getUserPage()->getLocalURL() . '">'. htmlspecialchars( $user->getName() ) . '</a> </td>
 						<td class="tdedit"><div> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
 					</tr>
 					<tr>
