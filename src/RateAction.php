@@ -10,8 +10,7 @@ use FormlessAction;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\User\User;
 use RuntimeException;
 
@@ -22,7 +21,6 @@ class RateAction extends FormlessAction {
 	const ACTION_EDIT = 'edit';
 	private readonly LinkRenderer $linkRenderer;
 	private readonly RateService $service;
-	private readonly Parser $parser;
 	private readonly int $editsReq;
 
 	public function __construct( Article $page, ?IContextSource $context = null ) {
@@ -31,7 +29,6 @@ class RateAction extends FormlessAction {
 		$config = $services->getConfigFactory()->makeConfig( 'main' );
 		$this->editsReq = $config->get( 'PvXRateEditsRequired' );
 		$this->linkRenderer = $services->getLinkRenderer();
-		$this->parser = $services->getParser();
 		$this->service = $services->getService( RateService::class );
 	}
 
@@ -340,6 +337,29 @@ Please report this bug to your site administrator.';
 			   . '<button class="wds-button wds-is-text" type="submit">Delete</button></form>';
 	}
 
+	protected function parseText( string $string  ) {
+		$out = MediaWikiServices::getInstance()->getMessageCache()->parse(
+			$string,
+			$this->getTitle(),
+			/*linestart*/true,
+			/*interface*/ false,
+			$this->getLanguage()
+		);
+
+		return $out instanceof ParserOutput
+			? $out->getText( [
+				'allowTOC' => false,
+				'enableSectionEditLinks' => false,
+				// Wrapping messages in an extra <div> is probably not expected. If
+				// they're outside the content area they probably shouldn't be
+				// targeted by CSS that's targeting the parser output, and if
+				// they're inside they already are from the outer div.
+				'unwrap' => true,
+				'userLang' => $this->getLanguage(),
+			] )
+			: $out;
+	}
+
 	/**
 	 * Builds output for a specific rating
 	 * @param array $ratings array containing the rating records
@@ -371,10 +391,9 @@ Please report this bug to your site administrator.';
 
 		$overall_rating_bar_width = ( $cur_score / $number_max ) * $bar_width;
 
-		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
 		// this is deprecated but as of now I don't believe there's a replacement
 		// $this->parser->mShowToc = false;
-		$parsedComment = $this->parser->parse( ''/*$ratings['comment']*/, $this->getTitle(), $parserOptions )->mText;
+		$parsedComment = $this->parseText( $ratings['comment'] ?: '' );
 
 		if ( $ratings[self::ACTION_ROLLBACK] ) {
 			$comment =
@@ -387,11 +406,7 @@ Please report this bug to your site administrator.';
 		$timestamp = strtotime( $ratings['timestamp'] );
 		$timestr = date( 'H:i, d M Y', $timestamp ) . ' (EST)'; # GMT on test box, EST on main server
 
-		$tduser = $this->parser->parse(
-			'[[User:' . $userName . '|' . $userName . ']]',
-			$this->getTitle(),
-			$parserOptions
-		)->mText;
+		$tduser = $this->parseText( '[[User:' . $userName . '|' . $userName . ']]' );
 		if ( $rate[3] > 0 ) {
 			$inno_out = 'X';
 		} else {
