@@ -374,7 +374,7 @@ Please report this bug to your site administrator.';
 		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
 		// this is deprecated but as of now I don't believe there's a replacement
 		// $this->parser->mShowToc = false;
-		$parsedComment = $this->parser->parse( $ratings['comment'], $this->getTitle(), $parserOptions )->mText;
+		$parsedComment = $this->parser->parse( ''/*$ratings['comment']*/, $this->getTitle(), $parserOptions )->mText;
 
 		if ( $ratings[self::ACTION_ROLLBACK] ) {
 			$comment =
