@@ -430,7 +430,7 @@ Please report this bug to your site administrator.';
 			<td class="tdcomment" rowspan="4">
 				<table class="tablecomment" style="border:0;">
 					<tr>
-						<td class="tduser"> <a href="' . $this->renderUsernameLink( $ratings['user_id'] ) . '</a> </td>
+						<td class="tduser">' . $this->renderUsernameLink( $ratings['user_id'] ) . ' </td>
 						<td class="tdedit"><div> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
 					</tr>
 					<tr>
