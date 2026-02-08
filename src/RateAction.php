@@ -12,6 +12,7 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use RuntimeException;
 
 class RateAction extends FormlessAction {
@@ -22,6 +23,7 @@ class RateAction extends FormlessAction {
 	private readonly LinkRenderer $linkRenderer;
 	private readonly RateService $service;
 	private readonly int $editsReq;
+	private readonly UserFactory $userFactory;
 
 	public function __construct( Article $page, ?IContextSource $context = null ) {
 		parent::__construct( $page, $context );
@@ -30,6 +32,8 @@ class RateAction extends FormlessAction {
 		$this->editsReq = $config->get( 'PvXRateEditsRequired' );
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->service = $services->getService( RateService::class );
+		$this->userFactory = $services->getUserFactory();
+
 	}
 
 	/**
@@ -360,6 +364,11 @@ Please report this bug to your site administrator.';
 			: $out;
 	}
 
+	private function renderUsernameLink( int $userId ) {
+		$user = $this->userFactory->newFromId( $userId );
+		return $user ? $this->linkRenderer->makeLink( $user->getUserPage(), $user->getName() ) : 'Unknown user';
+	}
+
 	/**
 	 * Builds output for a specific rating
 	 * @param array $ratings array containing the rating records
@@ -367,8 +376,6 @@ Please report this bug to your site administrator.';
 	 * @return string
 	 */
 	public function ratePrint( array $ratings, string $link ): string {
-		$userName = User::whoIs( $ratings['user_id'] );
-
 		$number_max = 5;
 		$bar_width = 168; // width in pixels of bar
 
@@ -396,20 +403,22 @@ Please report this bug to your site administrator.';
 		if ( $ratings[self::ACTION_ROLLBACK] ) {
 			$comment =
 				'<b>Removed: </b><s>' . $parsedComment . '</s><br> <b>Reason: </b>' . $ratings['reason'] .
-				'<br><b>Removed by: </b> ' . User::whois( $ratings['admin_id'] );
+				'<br><b>Removed by: </b> ' . $this->renderUsernameLink( $ratings['admin_id'] );
 		} else {
 			$comment = $parsedComment;
 		}
 
-		$timestamp = strtotime( $ratings['timestamp'] );
-		$timestr = date( 'H:i, d M Y', $timestamp ) . ' (EST)'; # GMT on test box, EST on main server
-		$user = User::newFromName( $userName );
+		$timestr = $date = $this->getLanguage()->userTimeAndDate(
+			$ratings['timestamp'],
+			$this->getUser()
+		);
 
 		if ( $rate[3] > 0 ) {
 			$inno_out = 'X';
 		} else {
 			$inno_out = 'O';
 		}
+
 		return '
 <div class="rating">
 	<table>
@@ -421,7 +430,7 @@ Please report this bug to your site administrator.';
 			<td class="tdcomment" rowspan="4">
 				<table class="tablecomment" style="border:0;">
 					<tr>
-						<td class="tduser"> <a href="' . $user->getUserPage()->getLocalURL() . '">'. htmlspecialchars( $user->getName() ) . '</a> </td>
+						<td class="tduser"> <a href="' . $this->renderUsernameLink( $ratings['user_id'] ) . '</a> </td>
 						<td class="tdedit"><div> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
 					</tr>
 					<tr>
