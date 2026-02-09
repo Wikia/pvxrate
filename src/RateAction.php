@@ -364,9 +364,9 @@ Please report this bug to your site administrator.';
 			: $out;
 	}
 
-	private function renderUsernameLink( int $userId ) {
+	private function renderUsernameLink( int $userId ) : string {
 		$user = $this->userFactory->newFromId( $userId );
-		return $user ? $this->linkRenderer->makeLink( $user->getUserPage(), $user->getName() ) : 'Unknown user';
+		return $this->linkRenderer->makeLink( $user->getUserPage(), $user->getName() );
 	}
 
 	/**
