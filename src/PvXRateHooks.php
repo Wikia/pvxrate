@@ -44,14 +44,14 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 		$target = $this->getBuildPage( $sktemplate->getTitle() );
 		if ( $target !== null ) {
 			$user = $sktemplate->getUser();
-			// Exit early if the voting user isn't logged in
+			// Show "Sign-in to vote" CTA
 			if ( $user->isAnon() ) {
 				$loginLink = $this->getLoginLink( $sktemplate );
 				$links['views']['pvxrate'] = [
-					'text' => $sktemplate->msg( 'page-header-action-button-sign-in-to-edit' )->escaped(),
+					'text' => $sktemplate->msg( 'pvxrate-tab-text-sign-in-to-rate' )->escaped(),
 					'href' => $loginLink,
-					'id' => 'log-in-vote',
-					'data-tracking-side-tool' => 'log-in-vote-side-tool'
+					'id' => 'log-in-rate',
+					'data-tracking-side-tool' => 'log-in-rate-side-tool'
 				];
 			// Make sure we can edit the page
 			} elseif ( $user->probablyCan( 'edit', $target ) ) {
@@ -139,7 +139,7 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 	private function getLoginLink( SkinTemplate $sktemplate ): string {
 		$authBaseUrl = MediaWikiServices::getInstance()->getService( FandomAuthUrls::class )->getBaseAuthUrl();
 		$query = wfArrayToCgi( [
-			'redirect' => $sktemplate->getTitle()->getLocalURL( "action=rate" )
+			'redirect' => $sktemplate->getTitle()->getFullURL( "action=rate" )
 		] );
 
 		return "$authBaseUrl/signin?$query";
