@@ -139,7 +139,8 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 	private function getLoginLink( SkinTemplate $sktemplate ): string {
 		$authBaseUrl = MediaWikiServices::getInstance()->getService( FandomAuthUrls::class )->getBaseAuthUrl();
 		$query = wfArrayToCgi( [
-			'redirect' => $sktemplate->getTitle()->getFullURL( "action=rate" )
+			'redirect' => $sktemplate->getTitle()->getFullURL( "action=rate" ),
+			'metadata' => 'anonymous-pvx-rate-source',
 		] );
 
 		return "$authBaseUrl/signin?$query";
