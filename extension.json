@@ -86,7 +86,8 @@
 		"main": {
 			"class": "Fandom\\PvXRate\\PvXRateHooks",
 			"services": [
-				"NamespaceInfo"
+				"NamespaceInfo",
+				"Fandom\\FandomAuth\\Clients\\FandomAuthUrls"
 			]
 		},
 		"db": {

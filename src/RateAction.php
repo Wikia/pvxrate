@@ -10,8 +10,6 @@ use FormlessAction;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\ParserOutput;
-use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use RuntimeException;
 
@@ -339,29 +337,6 @@ Please report this bug to your site administrator.';
 		return '<form method="post" action="' . $action . '">'
 			   . '<input name="rateId" type="hidden" value="' . $rateId . '" />'
 			   . '<button class="wds-button wds-is-text" type="submit">Delete</button></form>';
-	}
-
-	protected function parseText( string $string  ) {
-		$out = MediaWikiServices::getInstance()->getMessageCache()->parse(
-			$string,
-			$this->getTitle(),
-			/*linestart*/true,
-			/*interface*/ false,
-			$this->getLanguage()
-		);
-
-		return $out instanceof ParserOutput
-			? $out->getText( [
-				'allowTOC' => false,
-				'enableSectionEditLinks' => false,
-				// Wrapping messages in an extra <div> is probably not expected. If
-				// they're outside the content area they probably shouldn't be
-				// targeted by CSS that's targeting the parser output, and if
-				// they're inside they already are from the outer div.
-				'unwrap' => true,
-				'userLang' => $this->getLanguage(),
-			] )
-			: $out;
 	}
 
 	private function renderUsernameLink( int $userId ) : string {
