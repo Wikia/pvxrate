@@ -6,7 +6,6 @@ namespace Fandom\PvXRate;
 
 use Fandom\FandomAuth\Clients\FandomAuthUrls;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
@@ -26,8 +25,10 @@ use SkinTemplate;
  */
 class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 
-	public function __construct( private readonly NamespaceInfo $namespaceInfo ) {
-	}
+
+	public function __construct(
+		private readonly NamespaceInfo $namespaceInfo,
+		private  readonly FandomAuthUrls $fandomAuthUrls) { }
 
 	public static function onRegistration(): void {
 		require_once __DIR__ . '/defines.php';
@@ -51,7 +52,6 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 					'text' => $sktemplate->msg( 'pvxrate-tab-text-sign-in-to-rate' )->escaped(),
 					'href' => $loginLink,
 					'id' => 'log-in-rate',
-					'data-tracking-side-tool' => 'log-in-rate-side-tool'
 				];
 			// Make sure we can edit the page
 			} elseif ( $user->probablyCan( 'edit', $target ) ) {
@@ -137,11 +137,11 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 	}
 
 	private function getLoginLink( SkinTemplate $sktemplate ): string {
-		$authBaseUrl = MediaWikiServices::getInstance()->getService( FandomAuthUrls::class )->getBaseAuthUrl();
 		$query = wfArrayToCgi( [
 			'redirect' => $sktemplate->getTitle()->getFullURL( "action=rate" ),
 			'metadata' => 'anonymous-pvx-rate-source',
 		] );
+		$authBaseUrl = $this->fandomAuthUrls->getBaseAuthUrl();
 
 		return "$authBaseUrl/signin?$query";
 	}
