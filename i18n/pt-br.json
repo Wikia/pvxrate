@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "avaliar compilações",
+  "action-vote_rollback": "remover e restaurar votos de outros usuários",
+  "myratings": "Avaliações",
+  "no-ratings-found": "Nenhuma avaliação encontrada para este usuário.",
+  "pvxrate": "Taxa de PvX",
+  "pvxrate-tab-text": "Avaliar",
+  "pvxrate-tab-text-sign-in-to-rate": "Entre para avaliar",
+  "pvxrate_description": "Adiciona uma aba para avaliar artigos, listar avaliações de utilizadores e listar avaliações recentes",
+  "recentratings": "Avaliações Recentes",
+  "right-ratebuild": "Avaliar builds no espaço nominal Build",
+  "right-vote_rollback": "Remover e restaurar votos de outros usuários",
+  "specialpages-group-pvx": "PvX",
+  "tooltip-ca-pvxrate": "Avalie esta configuração",
+  "userratings": "Avaliações de Usuários"
+}

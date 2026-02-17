@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "Builds bewerten",
+  "action-vote_rollback": "Stimmen von anderen Benutzern entfernen und wiederherstellen",
+  "myratings": "Bewertungen",
+  "no-ratings-found": "Keine Bewertungen für diesen Benutzer gefunden.",
+  "pvxrate": "PvX-Rate",
+  "pvxrate-tab-text": "Bewerten",
+  "pvxrate-tab-text-sign-in-to-rate": "Zum Bewerten anmelden",
+  "pvxrate_description": "Fügt einen Reiter hinzu, um Artikel zu bewerten, Benutzerbewertungen aufzulisten und neueste Bewertungen aufzulisten.",
+  "recentratings": "Aktuelle Bewertungen",
+  "right-ratebuild": "Builds im Build-Namensraum bewerten",
+  "right-vote_rollback": "Stimmen anderer Benutzer entfernen und wiederherstellen",
+  "specialpages-group-pvx": "PvX",
+  "tooltip-ca-pvxrate": "Dieses Build bewerten",
+  "userratings": "Benutzerbewertungen"
+}

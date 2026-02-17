@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "calificar compilaciones",
+  "action-vote_rollback": "eliminar y restaurar votos de otros usuarios",
+  "myratings": "Calificaciones",
+  "no-ratings-found": "No se encontraron valoraciones para este usuario.",
+  "pvxrate": "Tasa de PvX",
+  "pvxrate-tab-text": "Calificar",
+  "pvxrate-tab-text-sign-in-to-rate": "Inicia sesión para valorar",
+  "pvxrate_description": "Añade una pestaña para valorar artículos, listar las valoraciones de los usuarios y listar las valoraciones recientes",
+  "recentratings": "Calificaciones recientes",
+  "right-ratebuild": "Calificar compilaciones en el espacio de nombres Build",
+  "right-vote_rollback": "Eliminar y restaurar votos de otros usuarios",
+  "specialpages-group-pvx": "PvX",
+  "tooltip-ca-pvxrate": "Califica esta compilación",
+  "userratings": "Valoraciones de usuarios"
+}
