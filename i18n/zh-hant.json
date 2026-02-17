@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "評價建置",
+  "action-vote_rollback": "移除和恢復其他使用者的投票",
+  "myratings": "評分",
+  "no-ratings-found": "找不到此使用者的評分。",
+  "pvxrate": "PvX 率",
+  "pvxrate-tab-text": "評分",
+  "pvxrate-tab-text-sign-in-to-rate": "登入以評分",
+  "pvxrate_description": "新增分頁以評價條目、列出使用者評價，以及列出近期評價",
+  "recentratings": "近期評分",
+  "right-ratebuild": "評價Build命名空間中的Build",
+  "right-vote_rollback": "移除和還原其他使用者的投票",
+  "specialpages-group-pvx": "PvX",
+  "tooltip-ca-pvxrate": "評價此建置",
+  "userratings": "使用者評分"
+}

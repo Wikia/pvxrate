@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "Оценить сборки",
+  "action-vote_rollback": "удалять и восстанавливать голоса других участников",
+  "myratings": "Рейтинги",
+  "no-ratings-found": "Для этого пользователя не найдено оценок.",
+  "pvxrate": "Рейтинг PvX",
+  "pvxrate-tab-text": "Оценить",
+  "pvxrate-tab-text-sign-in-to-rate": "Войдите, чтобы оценить",
+  "pvxrate_description": "Добавляет вкладку для оценки статей, вывода списка оценок пользователей и последних оценок.",
+  "recentratings": "Последние оценки",
+  "right-ratebuild": "Оценивать сборки в пространстве имён Build",
+  "right-vote_rollback": "Удалять и восстанавливать голоса других участников",
+  "specialpages-group-pvx": "PvX",
+  "tooltip-ca-pvxrate": "Оцените эту сборку",
+  "userratings": "Пользовательские рейтинги"
+}

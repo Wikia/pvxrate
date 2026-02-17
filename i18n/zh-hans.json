@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "评价构建",
+  "action-vote_rollback": "移除和恢复其他用户的投票",
+  "myratings": "评分",
+  "no-ratings-found": "未找到此用户的评分。",
+  "pvxrate": "PvX 评分",
+  "pvxrate-tab-text": "评分",
+  "pvxrate-tab-text-sign-in-to-rate": "登录以评分",
+  "pvxrate_description": "添加选项卡，用于评价条目、列出用户评价和最近评价",
+  "recentratings": "最近评分",
+  "right-ratebuild": "评价“Build”名字空间中的构建",
+  "right-vote_rollback": "移除和恢复其他用户的投票",
+  "specialpages-group-pvx": "玩家对任意",
+  "tooltip-ca-pvxrate": "评价此版本",
+  "userratings": "用户评分"
+}

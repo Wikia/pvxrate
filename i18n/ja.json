@@ -1,0 +1,16 @@
+{
+  "action-ratebuild": "ビルドの評価",
+  "action-vote_rollback": "他の利用者による投票の削除と復元",
+  "myratings": "評価",
+  "no-ratings-found": "この利用者の評価は見つかりませんでした。",
+  "pvxrate": "PvXレート",
+  "pvxrate-tab-text": "評価",
+  "pvxrate-tab-text-sign-in-to-rate": "ログインして評価",
+  "pvxrate_description": "記事を評価し、利用者の評価と最近の評価を一覧表示するタブを追加します。",
+  "recentratings": "最近の評価",
+  "right-ratebuild": "ビルド名前空間でビルドを評価する",
+  "right-vote_rollback": "他の利用者の投票を削除・復元する",
+  "specialpages-group-pvx": "PvX",
+  "tooltip-ca-pvxrate": "このビルドを評価",
+  "userratings": "ユーザー評価"
+}
