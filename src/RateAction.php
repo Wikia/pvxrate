@@ -10,9 +10,7 @@ use FormlessAction;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserOptions;
-use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use RuntimeException;
 
 class RateAction extends FormlessAction {
@@ -22,8 +20,8 @@ class RateAction extends FormlessAction {
 	const ACTION_EDIT = 'edit';
 	private readonly LinkRenderer $linkRenderer;
 	private readonly RateService $service;
-	private readonly Parser $parser;
 	private readonly int $editsReq;
+	private readonly UserFactory $userFactory;
 
 	public function __construct( Article $page, ?IContextSource $context = null ) {
 		parent::__construct( $page, $context );
@@ -31,8 +29,9 @@ class RateAction extends FormlessAction {
 		$config = $services->getConfigFactory()->makeConfig( 'main' );
 		$this->editsReq = $config->get( 'PvXRateEditsRequired' );
 		$this->linkRenderer = $services->getLinkRenderer();
-		$this->parser = $services->getParser();
 		$this->service = $services->getService( RateService::class );
+		$this->userFactory = $services->getUserFactory();
+
 	}
 
 	/**
@@ -340,6 +339,11 @@ Please report this bug to your site administrator.';
 			   . '<button class="wds-button wds-is-text" type="submit">Delete</button></form>';
 	}
 
+	private function renderUsernameLink( int $userId ) : string {
+		$user = $this->userFactory->newFromId( $userId );
+		return $this->linkRenderer->makeLink( $user->getUserPage(), $user->getName() );
+	}
+
 	/**
 	 * Builds output for a specific rating
 	 * @param array $ratings array containing the rating records
@@ -347,8 +351,6 @@ Please report this bug to your site administrator.';
 	 * @return string
 	 */
 	public function ratePrint( array $ratings, string $link ): string {
-		$userName = User::whoIs( $ratings['user_id'] );
-
 		$number_max = 5;
 		$bar_width = 168; // width in pixels of bar
 
@@ -371,32 +373,27 @@ Please report this bug to your site administrator.';
 
 		$overall_rating_bar_width = ( $cur_score / $number_max ) * $bar_width;
 
-		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
-		// this is deprecated but as of now I don't believe there's a replacement
-		// $this->parser->mShowToc = false;
-		$parsedComment = $this->parser->parse( $ratings['comment'], $this->getTitle(), $parserOptions )->mText;
+		$parsedComment = htmlspecialchars( $ratings['comment'] ?: '' );
 
 		if ( $ratings[self::ACTION_ROLLBACK] ) {
 			$comment =
 				'<b>Removed: </b><s>' . $parsedComment . '</s><br> <b>Reason: </b>' . $ratings['reason'] .
-				'<br><b>Removed by: </b> ' . User::whois( $ratings['admin_id'] );
+				'<br><b>Removed by: </b> ' . $this->renderUsernameLink( $ratings['admin_id'] );
 		} else {
 			$comment = $parsedComment;
 		}
 
-		$timestamp = strtotime( $ratings['timestamp'] );
-		$timestr = date( 'H:i, d M Y', $timestamp ) . ' (EST)'; # GMT on test box, EST on main server
+		$timestr = $date = $this->getLanguage()->userTimeAndDate(
+			$ratings['timestamp'],
+			$this->getUser()
+		);
 
-		$tduser = $this->parser->parse(
-			'[[User:' . $userName . '|' . $userName . ']]',
-			$this->getTitle(),
-			$parserOptions
-		)->mText;
 		if ( $rate[3] > 0 ) {
 			$inno_out = 'X';
 		} else {
 			$inno_out = 'O';
 		}
+
 		return '
 <div class="rating">
 	<table>
@@ -408,7 +405,7 @@ Please report this bug to your site administrator.';
 			<td class="tdcomment" rowspan="4">
 				<table class="tablecomment" style="border:0;">
 					<tr>
-						<td class="tduser">' . $tduser . '</td>
+						<td class="tduser">' . $this->renderUsernameLink( $ratings['user_id'] ) . ' </td>
 						<td class="tdedit"><div> Last edit: ' . $timestr . '&nbsp;</div>' . $link . '</td>
 					</tr>
 					<tr>

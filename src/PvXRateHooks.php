@@ -4,11 +4,11 @@ declare( strict_types=1 );
 
 namespace Fandom\PvXRate;
 
+use Fandom\FandomAuth\Clients\FandomAuthUrls;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use SkinTemplate;
 
 /**
@@ -25,8 +25,10 @@ use SkinTemplate;
  */
 class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 
-	public function __construct( private readonly NamespaceInfo $namespaceInfo ) {
-	}
+
+	public function __construct(
+		private readonly NamespaceInfo $namespaceInfo,
+		private  readonly FandomAuthUrls $fandomAuthUrls) { }
 
 	public static function onRegistration(): void {
 		require_once __DIR__ . '/defines.php';
@@ -40,13 +42,26 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 		//   (4) "variants" => like French, German, Spanish
 		// and we're choosing views because Rating is like Editing
 		// Get the correct target build page (valid if in the build or build_talk namespaces)
-		$target = $this->getBuildPage( $sktemplate->getTitle(), $sktemplate->getUser() );
+		$target = $this->getBuildPage( $sktemplate->getTitle() );
 		if ( $target !== null ) {
-			$links['views']['pvxrate'] = [
-				'text' => $sktemplate->msg( 'pvxrate-tab-text' )->text(),
-				'href' => $sktemplate->getTitle()->getLocalURL( "action=rate" ),
-			];
+			$user = $sktemplate->getUser();
+			// Show "Sign-in to vote" CTA
+			if ( $user->isAnon() ) {
+				$loginLink = $this->getLoginLink( $sktemplate );
+				$links['views']['pvxrate'] = [
+					'text' => $sktemplate->msg( 'pvxrate-tab-text-sign-in-to-rate' )->escaped(),
+					'href' => $loginLink,
+					'id' => 'log-in-rate',
+				];
+			// Make sure we can edit the page
+			} elseif ( $user->probablyCan( 'edit', $target ) ) {
+				$links['views']['pvxrate'] = [
+					'text' => $sktemplate->msg( 'pvxrate-tab-text' )->text(),
+					'href' => $sktemplate->getTitle()->getLocalURL( "action=rate" ),
+				];
+			}
 		}
+
 		$this->addURLToUserLinks( $links['user-menu'], $sktemplate );
 	}
 
@@ -91,12 +106,7 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 	 * Helper function
 	 * Find the build namespace page associated with the build. Includes sanity checks.
 	 */
-	public function getBuildPage( Title $title, User $user ): ?Title {
-		// Exit early if the voting user isn't logged in
-		if ( !$user->isRegistered() ) {
-			return null;
-		}
-
+	public function getBuildPage( Title $title ): ?Title {
 		// Exit early if the page is in the wrong namespace
 		$ns = $title->getNamespace();
 		if ( $ns != NS_BUILD && $ns != NS_BUILD_TALK ) {
@@ -108,11 +118,6 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 		// lead to an endless loop (like if the talk page redirects to the user page or a subpage).
 		// This means that the Rate tab will not appear on build pages if the build page is a redirect.
 		if ( $buildTitle === null || $buildTitle->isRedirect() ) {
-			return null;
-		}
-
-		// Make sure we can edit the page
-		if ( !$user->probablyCan( 'edit', $buildTitle ) ) {
 			return null;
 		}
 
@@ -129,5 +134,15 @@ class PvXRateHooks implements SkinTemplateNavigation__UniversalHook {
 		}
 
 		return $baseTitle;
+	}
+
+	private function getLoginLink( SkinTemplate $sktemplate ): string {
+		$query = wfArrayToCgi( [
+			'redirect' => $sktemplate->getTitle()->getFullURL( "action=rate" ),
+			'metadata' => 'article-registration-rate-build',
+		] );
+		$authBaseUrl = $this->fandomAuthUrls->getBaseAuthUrl();
+
+		return "$authBaseUrl/signin?$query";
 	}
 }
